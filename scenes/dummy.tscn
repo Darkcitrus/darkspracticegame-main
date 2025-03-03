@@ -1,0 +1,47 @@
+[gd_scene load_steps=8 format=3 uid="uid://b3eww6lpmfxuk"]
+
+[ext_resource type="Script" path="res://scripts/Dummy.gd" id="1_53g3u"]
+[ext_resource type="Texture2D" uid="uid://cv5hb07u0263t" path="res://assets/enemyph.png" id="2_4gxho"]
+[ext_resource type="Texture2D" uid="uid://bk0xidxd5dmmy" path="res://assets/healthframe.png" id="3_wqc6b"]
+[ext_resource type="Texture2D" uid="uid://bnbvvycx07af6" path="res://assets/healthbar.png" id="4_kk1w2"]
+[ext_resource type="Script" path="res://scripts/health_bar.gd" id="5_ud4r4"]
+[ext_resource type="PackedScene" uid="uid://bm21v60srx58p" path="res://scenes/selector.tscn" id="6_64mbj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_56yub"]
+size = Vector2(87.5704, 81.9209)
+
+[node name="Dummy" type="Area2D" groups=["Enemy"]]
+position = Vector2(576, 327)
+scale = Vector2(0.354, 0.354)
+collision_layer = 2
+script = ExtResource("1_53g3u")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1.0848e-05, -2.44379e-05)
+shape = SubResource("RectangleShape2D_56yub")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(-1.0848e-05, 2.27494e-05)
+scale = Vector2(1.90371, 2.05243)
+texture = ExtResource("2_4gxho")
+
+[node name="HealthBar" type="TextureProgressBar" parent="." groups=["UI"]]
+texture_filter = 1
+offset_left = -98.87
+offset_top = 45.7587
+offset_right = 101.13
+offset_bottom = 95.7587
+value = 100.0
+rounded = true
+texture_under = ExtResource("3_wqc6b")
+texture_progress = ExtResource("4_kk1w2")
+script = ExtResource("5_ud4r4")
+
+[node name="RespawnTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Selector" parent="." instance=ExtResource("6_64mbj")]
+texture_filter = 1
+
+[editable path="Selector"]

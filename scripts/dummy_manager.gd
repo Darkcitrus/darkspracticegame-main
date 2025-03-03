@@ -1,0 +1,32 @@
+extends Node2D
+
+var dummy_scene = preload("res://scenes/dummy.tscn")
+var spawn_position: Vector2
+
+func _ready():
+	if get_child_count() > 0:
+		var first_dummy = get_child(0)
+		spawn_position = first_dummy.position
+		connect_dummy(first_dummy)
+		print("DummyManager: Connected to first dummy")
+
+func _on_dummy_died(_pos):
+	print("DummyManager: Dummy died, respawning in 1 second...")
+	await get_tree().create_timer(1.0).timeout
+	spawn_new_dummy()
+
+func spawn_new_dummy():
+	var new_dummy = dummy_scene.instantiate()
+	add_child(new_dummy)
+	new_dummy.position = spawn_position
+	connect_dummy(new_dummy)
+	print("DummyManager: New dummy spawned")
+
+func connect_dummy(dummy):
+	if not dummy.is_connected("dummy_died", _on_dummy_died):
+		dummy.connect("dummy_died", _on_dummy_died)
+	dummy.add_to_group("Enemy")
+	dummy.add_to_group("Targetable")
+	dummy.set_process_input(true)
+	dummy.input_pickable = true
+	print("DummyManager: Dummy connected and configured")

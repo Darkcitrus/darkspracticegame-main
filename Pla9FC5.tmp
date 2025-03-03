@@ -1,0 +1,293 @@
+extends CharacterBody2D 
+
+# Current state variables
+var can_dodge: bool = true
+var dodging: bool = false
+var attacking: bool = false
+var dodge_recovering: bool = false
+var attack_power = 5
+var thrust_distance = 50
+var swinging_left: bool = true  # Track the current direction of the swing
+var swinging: bool = false  # Track if the sword is currently swinging
+var current_tween: Tween = null  # Store the current tween
+var attack_cooldown = 0.3  # attack cooldown in seconds
+var last_attack_time = 0
+var fire_ball: PackedScene = preload("res://scenes/fire_ball.tscn")
+var health = 100
+var max_health = 100
+var crit_chance: float = 0.25
+var crit_damage = 2
+var alive: bool = true
+
+# Movement variables
+var run_speed = 250
+var dodge_speed: int = 1000
+var direction: Vector2
+var attack_direction: Vector2
+var move_input = Vector2()
+var dodges = 2
+const MAX_DODGES = 2
+const DODGE_COOLDOWN_TIME = 1.0
+const DODGE_RECOVERY_TIME = 2.0
+
+# Reference variables
+@onready var dodge_timer = $DodgeTimer
+@onready var dodge_recovery = $DodgeRecovery
+@onready var dodge_cooldown = $DodgeCooldown
+@onready var dodge_label = $Label
+@onready var hitbox = $hitbox
+@onready var sword_sprite = $hitbox/Sprite2D
+@onready var attackcd = $hitbox/attackcd
+@onready var projectiles = $Projectiles
+@onready var respawn_timer: Timer = $RespawnTimer
+
+func _ready():
+	randomize()
+	respawn_timer.wait_time = 5.0
+	respawn_timer.one_shot = true
+	respawn_timer.timeout.connect(_on_respawn_timeout)
+
+func _physics_process(delta) :
+	attack_direction = (get_global_mouse_position() - global_position).normalized()
+	handle_movement()
+	thrust_attack(delta)
+	shoot_fireball()
+	sweep_process(delta)
+	move_and_slide()
+	point_hitbox_to_mouse()
+	handle_health()
+	dodge_label.text = str(dodges)
+
+func handle_health():
+	if health <= 0:
+		alive = false
+		queue_free()
+
+func thrust_attack(_delta):
+
+	# Check if the left mouse button is pressed and the character is not already attacking
+	if Input.is_action_pressed('left_click') and not attacking:
+		
+		# Get the current time in seconds
+		var current_time = Time.get_ticks_msec() / 1000.0
+		# Check if the cooldown period has passed since the last attack
+		if current_time - last_attack_time >= attack_cooldown:
+			# Update the last attack time to the current time
+			last_attack_time = current_time
+			# Set attacking flag to true
+			attacking = true
+			# Base damage
+			var damage = attack_power 
+			# Check for critical hit
+			if randf() < crit_chance:
+				damage *= crit_damage
+				print("Critical hit!")
+
+			apply_damage(target, damage)
+
+			# Create a tween for thrust animation
+			var tween = create_tween()
+			# Set the tween transition type to exponential
+			tween.set_trans(Tween.TRANS_EXPO)
+			tween.set_ease(Tween.EASE_OUT)
+			
+			# Calculate positions relative to player
+			var start_offset = 150  # Normal distance from player
+			var thrust_offset = 300  # Extended thrust distance
+			
+			# Forward thrust
+			tween.tween_method(
+				func(progress: float):
+					var current_offset = lerp(start_offset, thrust_offset, progress)
+					hitbox.position = attack_direction * current_offset,
+				0.0, 1.0, 0.15
+			)
+			
+			# Return to starting position
+			tween.tween_method(
+				func(progress: float):
+					var current_offset = lerp(thrust_offset, start_offset, progress)
+					hitbox.position = attack_direction * current_offset,
+				0.0, 1.0, 0.25
+			)
+			
+			tween.tween_callback(func(): attacking = false)
+			attackcd.start()	
+		pass
+
+func sweep_process(_delta):
+	# Start sweeping when right mouse button is pressed
+	if Input.is_action_pressed("right_click"):
+		if not swinging:
+			start_sweep()
+	else:
+		# Stop sweeping when right mouse button is released
+		if swinging:
+			stop_sweep()
+
+func start_sweep():
+	swinging = true
+	attacking = true
+	perform_sweep()
+
+func stop_sweep():
+	swinging = false
+	attacking = false
+	if current_tween:
+		current_tween.kill()
+	
+	# Create a tween for smooth return animation
+	current_tween = create_tween()
+	current_tween.set_trans(Tween.TRANS_SINE)
+	current_tween.set_ease(Tween.EASE_OUT)
+	
+	# Get the target position and rotation
+	var mouse_position = get_global_mouse_position()
+	var direction_to_mouse = (mouse_position - global_position).normalized()
+	var target_rotation = direction_to_mouse.angle() + PI/2
+	var target_position = global_position + direction_to_mouse * 50
+	
+	# Animate both rotation and position
+	current_tween.tween_property(sword_sprite, "rotation", target_rotation, 0.2)
+	current_tween.parallel().tween_property(hitbox, "global_position", target_position, 0.2)
+	
+	# After the tween completes, clear it and enable normal mouse tracking
+	current_tween.tween_callback(func():
+		current_tween = null
+		point_hitbox_to_mouse()
+	)
+
+func perform_sweep():
+	if not swinging:
+		return
+		
+	# Create a tween for smooth animation
+	current_tween = create_tween()
+	current_tween.set_trans(Tween.TRANS_EXPO)
+	current_tween.set_ease(Tween.EASE_IN_OUT)
+	
+	# Set up the sweep animation
+	current_tween.tween_method(func(progress: float):
+		# Calculate the direction to the mouse position
+		var mouse_position = get_global_mouse_position()
+		var direction_to_mouse = (mouse_position - global_position).normalized()
+		var swing_base_angle = direction_to_mouse.angle()
+		
+		# Calculate the sweep angles based on the current direction
+		var start_angle = swing_base_angle - PI/4 if swinging_left else swing_base_angle + PI/4
+		var end_angle = swing_base_angle + PI/4 if swinging_left else swing_base_angle - PI/4
+		
+		var current_angle = lerp_angle(start_angle, end_angle, progress)
+		var sweep_direction = Vector2(cos(current_angle), sin(current_angle))
+		hitbox.global_position = global_position + sweep_direction * 50
+		sword_sprite.rotation = current_angle + PI/2
+	, 0.0, 1.0, 0.2)  # 0.3 seconds duration for faster swings
+	
+	# Chain the next sweep with opposite direction
+	current_tween.tween_callback(func():
+		if swinging:  # Only continue if still swinging
+			swinging_left = !swinging_left  # Toggle direction
+			perform_sweep()  # Start the next sweep
+	)
+
+func point_hitbox_to_mouse():
+	if not attacking and current_tween == null:  # Only update if not attacking and not tweening
+		var mouse_position = get_global_mouse_position()
+		var direction_to_mouse = (mouse_position - global_position).normalized()
+		sword_sprite.rotation = direction_to_mouse.angle() + PI/2
+		hitbox.global_position = global_position + direction_to_mouse * 50
+
+func sweep_attack():
+	var mouse_pos = get_global_mouse_position()
+	var angle = position.direction_to(mouse_pos).angle()
+	
+	# Get a reference to the sword Sprite2D
+	var sword = $hitbox/Sprite2D
+	
+	# Rotate the sword towards the mouse position
+	sword.rotation = angle + PI/2  # PI/2 is added because the sword is initially rotated by 90 degrees
+	
+	# Implement a sweeping motion (example: 45 degrees sweep)
+	var sweep_angle = PI/4
+	
+	# Animate the rotation
+	var tween = create_tween()
+	tween.tween_property(sword, "rotation", angle + PI/2 + sweep_angle, 0.1).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(sword, "rotation", angle + PI/2 - sweep_angle, 0.1).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE).set_delay(0.1)
+	tween.tween_property(sword, "rotation", angle + PI/2, 0.1).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE).set_delay(0.2)
+
+func shoot_fireball():
+	if Input.is_action_just_pressed("ui_e"):  # E key press
+		var fireball = fire_ball.instantiate()
+		# Add to the current scene instead of as a child of projectiles
+		get_tree().root.add_child(fireball)
+		fireball.global_position = global_position  # Set position after adding to scene tree
+		fireball.initialize(attack_direction)
+
+func apply_damage(target, damage):
+	target.health -= damage
+	if target.health <= 0:
+		target.queue_free()
+# This function handles the player's movement input.
+# It checks for the direction keys and applies movement accordingly.
+func handle_movement():
+	# Check if the player is not currently dodging
+	if not dodging:
+		# Get the movement input from the direction keys
+		move_input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	# Determine the movement speed based on whether the player is dodging or not
+	var SPEED = run_speed if not dodging else dodge_speed
+	# Calculate the movement direction by multiplying the input vector with the speed
+	var movedirection = move_input * SPEED
+	# Apply the movement to the player's velocity
+	velocity = movedirection
+	# Check if the player can dodge and if the dodge button is pressed
+	if can_dodge:
+		if Input.is_action_just_pressed("ui_select") and not dodging and dodges > 0:
+			# Handle the dodge movement
+			handle_dodge()
+
+# This function handles the player's dodge movement.
+# It reduces the number of available dodges, starts the dodge recovery timer, and sets the dodging flag to true.
+func handle_dodge():
+	dodges -= 1 
+	print("dashes:"+str(dodges))
+	dodge_recovery.start()
+	if dodge_timer.timeout:
+		dodging = true
+		dodge_timer.start()
+
+# Timeout Section
+func _on_dodge_timer_timeout():
+	can_dodge = false
+	dodging = false
+	dodge_cooldown.start()
+	if dodges < MAX_DODGES:
+		dodge_recovering = true
+		dodge_recovery.start()
+
+func _on_dodge_recovery_timeout():
+	if dodges < MAX_DODGES:
+		dodges += 1
+		print("+"+str(dodges))
+	dodge_recovery.start()
+
+func _on_dodge_cooldown_timeout():
+	can_dodge = true
+
+func _on_attackcd_timeout():
+	attacking = false
+	print("Player attacked with power: ", attack_power)
+	pass
+
+func remove_and_respawn():
+	# Remove the node
+	queue_free()
+	# Start the timer
+	respawn_timer.start()
+
+func _on_respawn_timeout():
+	# Respawn the node
+	var new_node = preload("res://scenes/character_body_2d.tscn").instance()
+	get_parent().add_child(new_node)
+	new_node.position = position # Set the position to the original position if needed

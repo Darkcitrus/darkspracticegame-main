@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://dxqdjlhmko0ff"]
+
+[node name="create_nodegraph" type="OptionButton"]
+selected = 0
+item_count = 7
+popup/item_0/text = "Create NodeGraph "
+popup/item_0/disabled = true
+popup/item_0/separator = true
+popup/item_1/text = "States"
+popup/item_1/id = 1
+popup/item_2/text = "Events"
+popup/item_2/id = 2
+popup/item_3/text = "Change State"
+popup/item_3/id = 3
+popup/item_4/text = "Condition"
+popup/item_4/id = 4
+popup/item_5/text = "Range"
+popup/item_5/id = 5
+popup/item_6/text = "Change Property"
+popup/item_6/id = 6

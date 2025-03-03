@@ -1,0 +1,136 @@
+[gd_scene load_steps=12 format=3 uid="uid://taml8dcwdpup"]
+
+[ext_resource type="Script" path="res://Node2D.gd" id="1_r1okl"]
+[ext_resource type="PackedScene" uid="uid://o888u5fliew8" path="res://world_border.tscn" id="2_2c06o"]
+[ext_resource type="PackedScene" uid="uid://ctpaf7qjnnovf" path="res://scenes/character_body_2d.tscn" id="2_xhnnt"]
+[ext_resource type="Texture2D" uid="uid://cv5hb07u0263t" path="res://enemyph.png" id="3_bqayh"]
+[ext_resource type="Script" path="res://Dummy.gd" id="3_qbrdg"]
+[ext_resource type="Texture2D" uid="uid://2ehgym06ft3d" path="res://simplesword.png" id="6_maag0"]
+[ext_resource type="Texture2D" uid="uid://bk0xidxd5dmmy" path="res://healthframe.png" id="7_bb43t"]
+[ext_resource type="Texture2D" uid="uid://bnbvvycx07af6" path="res://healthbar.png" id="8_0iyk8"]
+[ext_resource type="Script" path="res://health_bar.gd" id="8_45adm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_56yub"]
+size = Vector2(87.5704, 81.9209)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7lohs"]
+radius = 11.2994
+height = 96.0452
+
+[node name="Playtest Screen" type="Node2D" groups=["UI"]]
+script = ExtResource("1_r1okl")
+
+[node name="World Border" parent="." groups=["World"] instance=ExtResource("2_2c06o")]
+
+[node name="Dummy" type="Area2D" parent="." groups=["Enemy"]]
+position = Vector2(317, 327)
+scale = Vector2(0.354, 0.354)
+script = ExtResource("3_qbrdg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Dummy"]
+position = Vector2(371.469, 139.831)
+shape = SubResource("RectangleShape2D_56yub")
+
+[node name="Sprite2D" type="Sprite2D" parent="Dummy"]
+texture_filter = 1
+position = Vector2(371.469, 139.742)
+scale = Vector2(1.90371, 2.05243)
+texture = ExtResource("3_bqayh")
+
+[node name="HealthBar" type="TextureProgressBar" parent="Dummy" groups=["Enemy", "Player", "UI", "World"]]
+offset_left = 271.0
+offset_top = 184.0
+offset_right = 471.0
+offset_bottom = 234.0
+value = 100.0
+rounded = true
+texture_under = ExtResource("7_bb43t")
+texture_progress = ExtResource("8_0iyk8")
+script = ExtResource("8_45adm")
+
+[node name="RespawnTimer" type="Timer" parent="Dummy"]
+one_shot = true
+
+[node name="Camera2D" type="Camera2D" parent="." groups=["UI"]]
+position = Vector2(576, 323)
+scale = Vector2(0.354, 0.354)
+
+[node name="Player" parent="." groups=["Player"] instance=ExtResource("2_xhnnt")]
+texture_filter = 5
+position = Vector2(321, 327)
+platform_on_leave = 2
+
+[node name="HealthBar" type="TextureProgressBar" parent="Player" groups=["Enemy", "Player", "UI", "World"]]
+offset_left = -98.8701
+offset_top = 67.7966
+offset_right = 101.13
+offset_bottom = 117.797
+value = 100.0
+rounded = true
+texture_under = ExtResource("7_bb43t")
+texture_progress = ExtResource("8_0iyk8")
+script = ExtResource("8_45adm")
+
+[node name="DashCount" type="Label" parent="Player"]
+texture_filter = 6
+layout_direction = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.4238
+offset_top = -290.96
+offset_right = -9.42374
+offset_bottom = -264.96
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(5, 5)
+size_flags_horizontal = 3
+size_flags_vertical = 6
+size_flags_stretch_ratio = 3.58
+text = "2"
+uppercase = true
+
+[node name="DodgeTimer" type="Timer" parent="Player"]
+wait_time = 0.1
+one_shot = true
+
+[node name="DodgeRecovery" type="Timer" parent="Player"]
+wait_time = 0.5
+one_shot = true
+
+[node name="DodgeCooldown" type="Timer" parent="Player"]
+wait_time = 0.1
+one_shot = true
+
+[node name="RespawnTimer" type="Timer" parent="Player"]
+wait_time = 5.0
+one_shot = true
+
+[node name="sword" type="Area2D" parent="Player" groups=["Effect"]]
+position = Vector2(150, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/sword"]
+texture_filter = 1
+position = Vector2(0.00012207, 0)
+rotation = 1.57079
+scale = Vector2(4.23728, 5.64972)
+texture = ExtResource("6_maag0")
+
+[node name="hitbox" type="CollisionShape2D" parent="Player/sword"]
+position = Vector2(6.10352e-05, -6.10352e-05)
+rotation = 1.57079
+shape = SubResource("CapsuleShape2D_7lohs")
+
+[node name="attackcd" type="Timer" parent="Player/sword/hitbox"]
+wait_time = 0.206
+one_shot = true
+
+[connection signal="area_entered" from="Dummy" to="Dummy" method="_on_area_entered"]
+[connection signal="timeout" from="Dummy/RespawnTimer" to="Player" method="_on_respawn_timeout"]
+[connection signal="timeout" from="Player/DodgeTimer" to="Player" method="_on_dodge_timer_timeout"]
+[connection signal="timeout" from="Player/DodgeRecovery" to="Player" method="_on_dodge_recovery_timeout"]
+[connection signal="timeout" from="Player/DodgeCooldown" to="Player" method="_on_dodge_cooldown_timeout"]
+[connection signal="timeout" from="Player/RespawnTimer" to="Player" method="_on_respawn_timeout"]
+[connection signal="timeout" from="Player/sword/hitbox/attackcd" to="Player" method="_on_attackcd_timeout"]

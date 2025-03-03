@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://b2olukq64crt1"]
+
+[ext_resource type="Script" path="res://scripts/EnemyMelee.gd" id="1_7fr0h"]
+[ext_resource type="Texture2D" uid="uid://cv5hb07u0263t" path="res://assets/enemyph.png" id="2_8te0o"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_x4nhp"]
+radius = 17.0
+
+[node name="EnemyMelee" type="CharacterBody2D"]
+position = Vector2(476, 303)
+motion_mode = 1
+script = ExtResource("1_7fr0h")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-34, 34)
+texture = ExtResource("2_8te0o")
+
+[node name="AttackTimer" type="Timer" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-34, 34)
+shape = SubResource("CircleShape2D_x4nhp")
+
+[connection signal="timeout" from="AttackTimer" to="." method="_on_attack_timer_timeout"]

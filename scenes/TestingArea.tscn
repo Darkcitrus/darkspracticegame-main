@@ -1,0 +1,69 @@
+[gd_scene load_steps=9 format=3 uid="uid://taml8dcwdpup"]
+
+[ext_resource type="Script" path="res://scripts/Node2D.gd" id="1_4nlp4"]
+[ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_ahoaf"]
+[ext_resource type="Script" path="res://scripts/menu.gd" id="2_pkncg"]
+[ext_resource type="PackedScene" uid="uid://o888u5fliew8" path="res://scenes/world_border.tscn" id="3_8ers3"]
+[ext_resource type="Texture2D" uid="uid://cvmt1qtpxdcn5" path="res://assets/Menu.png" id="3_e11ah"]
+[ext_resource type="Script" path="res://scripts/quit_button.gd" id="4_4yquy"]
+[ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="4_q43k7"]
+[ext_resource type="Script" path="res://scripts/play_button.gd" id="5_ob1lq"]
+
+[node name="Testing Area" type="Node2D" groups=["UI"]]
+script = ExtResource("1_4nlp4")
+
+[node name="Menu" type="Node2D" parent="." groups=["UI"]]
+script = ExtResource("2_pkncg")
+
+[node name="MenuBG" type="Sprite2D" parent="Menu"]
+z_index = 2
+texture_filter = 1
+position = Vector2(576, 323)
+scale = Vector2(1.19487, 1.292)
+texture = ExtResource("3_e11ah")
+
+[node name="QuitButton" type="Button" parent="Menu"]
+z_index = 2
+texture_filter = 6
+offset_left = 484.0
+offset_top = 437.0
+offset_right = 669.0
+offset_bottom = 496.0
+text = "Quit :("
+script = ExtResource("4_4yquy")
+
+[node name="PlayButton" type="Button" parent="Menu"]
+z_index = 2
+texture_filter = 6
+offset_left = 484.0
+offset_top = 369.0
+offset_right = 669.0
+offset_bottom = 428.0
+text = "Play :)"
+script = ExtResource("5_ob1lq")
+
+[node name="GameWorld" type="Node2D" parent="."]
+position = Vector2(576, 327)
+
+[node name="Player" parent="GameWorld" groups=["Player"] instance=ExtResource("4_q43k7")]
+texture_filter = 5
+position = Vector2(-255, 0)
+platform_on_leave = 2
+
+[node name="DodgeRecovery" parent="GameWorld/Player" index="6"]
+one_shot = false
+
+[node name="Dummy Manager" parent="GameWorld" instance=ExtResource("2_ahoaf")]
+position = Vector2(0, 0)
+
+[node name="World Border" parent="GameWorld" groups=["World"] instance=ExtResource("3_8ers3")]
+position = Vector2(-403, -212)
+
+[node name="Camera2D" type="Camera2D" parent="GameWorld" groups=["UI"]]
+position = Vector2(0, 8)
+scale = Vector2(0.354, 0.354)
+
+[editable path="GameWorld/Player"]
+[editable path="GameWorld/Dummy Manager"]
+[editable path="GameWorld/Dummy Manager/Dummy"]
+[editable path="GameWorld/Dummy Manager/Dummy/Selector"]

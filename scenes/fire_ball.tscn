@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://7puf5246l5s6"]
+
+[ext_resource type="Texture2D" uid="uid://dt50x046cu1bf" path="res://assets/fireball.png" id="1_2isxc"]
+[ext_resource type="Script" path="res://scripts/fire_ball.gd" id="1_62x8t"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4ghaj"]
+radius = 16.0
+
+[node name="FireBall" type="Area2D" groups=["Effect"]]
+script = ExtResource("1_62x8t")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(2, 2)
+texture = ExtResource("1_2isxc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_4ghaj")
+
+[node name="FireBallVanish" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="FireBallVanish" to="." method="_on_fire_ball_vanish_timeout"]
