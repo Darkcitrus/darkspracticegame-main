@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://taml8dcwdpup"]
+[gd_scene load_steps=10 format=3 uid="uid://taml8dcwdpup"]
 
 [ext_resource type="Script" path="res://scripts/Node2D.gd" id="1_4nlp4"]
 [ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_ahoaf"]
@@ -8,11 +8,13 @@
 [ext_resource type="Script" path="res://scripts/quit_button.gd" id="4_4yquy"]
 [ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="4_q43k7"]
 [ext_resource type="Script" path="res://scripts/play_button.gd" id="5_ob1lq"]
+[ext_resource type="Texture2D" uid="uid://dqcxilmlb3ogf" path="res://assets/img/bg.png" id="9_led6v"]
 
 [node name="Testing Area" type="Node2D" groups=["UI"]]
 script = ExtResource("1_4nlp4")
 
 [node name="Menu" type="Node2D" parent="." groups=["UI"]]
+visible = false
 script = ExtResource("2_pkncg")
 
 [node name="MenuBG" type="Sprite2D" parent="Menu"]
@@ -45,6 +47,14 @@ script = ExtResource("5_ob1lq")
 [node name="GameWorld" type="Node2D" parent="."]
 position = Vector2(576, 327)
 
+[node name="Background" type="Sprite2D" parent="GameWorld" groups=["World"]]
+light_mask = 9
+visibility_layer = 8
+texture_filter = 1
+position = Vector2(0.00012207, 0)
+scale = Vector2(0.899219, 0.897222)
+texture = ExtResource("9_led6v")
+
 [node name="Player" parent="GameWorld" groups=["Player"] instance=ExtResource("4_q43k7")]
 texture_filter = 5
 position = Vector2(-255, 0)
@@ -67,3 +77,4 @@ scale = Vector2(0.354, 0.354)
 [editable path="GameWorld/Dummy Manager"]
 [editable path="GameWorld/Dummy Manager/Dummy"]
 [editable path="GameWorld/Dummy Manager/Dummy/Selector"]
+[editable path="GameWorld/World Border"]
