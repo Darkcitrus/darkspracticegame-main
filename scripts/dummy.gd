@@ -11,6 +11,10 @@ var damage = 15
 var alive = true
 var initial_position: Vector2
 
+# Add exported variables for oscillation
+@export var amplitude: float = 20
+@export var frequency: float = 1.0
+
 @onready var healthbar: TextureProgressBar = $HealthBar
 @onready var selector = $Selector  # Remove the Label cast, let it be whatever node type it is
 
@@ -48,6 +52,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
+	# Update vertical position with a sine wave oscillation
+	position.y = initial_position.y + sin(Time.get_ticks_msec() / 1000.0 * frequency * PI * 2) * amplitude
 	pass
 
 func _on_area_entered(area: Area2D) -> void:

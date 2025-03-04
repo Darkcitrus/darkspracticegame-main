@@ -9,6 +9,7 @@ script = ExtResource("1_yb1pn")
 
 [node name="Dummy" parent="." groups=["Targetable"] instance=ExtResource("2_4qj6t")]
 position = Vector2(0, 0)
+amplitude = 50.0
 
 [node name="Selector" parent="Dummy" index="4" groups=["UI"]]
 

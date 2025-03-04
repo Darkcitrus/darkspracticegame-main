@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://scripts/selector.gd" id="1_jxmd6"]
 [ext_resource type="Texture2D" uid="uid://cgpjkm7tay4oi" path="res://assets/img/selector.png" id="2_0wrl6"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dtvfk"]
-size = Vector2(110, 111)
+[sub_resource type="CircleShape2D" id="CircleShape2D_k77jk"]
+radius = 89.89
 
 [node name="Selector" type="StaticBody2D"]
 script = ExtResource("1_jxmd6")
@@ -15,4 +15,5 @@ texture = ExtResource("2_0wrl6")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -0.5)
-shape = SubResource("RectangleShape2D_dtvfk")
+scale = Vector2(2.04, 2)
+shape = SubResource("CircleShape2D_k77jk")
