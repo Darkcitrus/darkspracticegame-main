@@ -71,9 +71,9 @@ func _process(delta):
 # Called when the fireball collides with another body
 func _on_body_entered(body: Node2D) -> void:
 	print("Fireball hit body: ", body.name, " in groups: ", body.get_groups())
-	# Check self-destruction if body or its parent is in Enemy or if body is in World
+	# Check self-destruction if body or its parent is in Enemy or if body is in World, but not UI
 	var hit_enemy = body.is_in_group("Enemy") or (body.get_parent() and body.get_parent().is_in_group("Enemy"))
-	if hit_enemy or body.is_in_group("World"):
+	if (hit_enemy or body.is_in_group("World")) and not body.is_in_group("UI"):
 		if body.has_method("take_damage"):
 			var damage_info = calculate_damage()
 			body.take_damage(damage_info["damage"], damage_info["is_crit"])
@@ -83,9 +83,9 @@ func _on_body_entered(body: Node2D) -> void:
 # Called when the fireball enters another area
 func _on_area_entered(area: Area2D) -> void:
 	print("Fireball hit area: ", area.name, " in groups: ", area.get_groups())
-	# Check self-destruction if area or its parent is in Enemy or if area is in World
+	# Check self-destruction if area or its parent is in Enemy or if area is in World, but not UI
 	var hit_enemy = area.is_in_group("Enemy") or (area.get_parent() and area.get_parent().is_in_group("Enemy"))
-	if hit_enemy or area.is_in_group("World"):
+	if (hit_enemy or area.is_in_group("World")) and not area.is_in_group("UI"):
 		if area.has_method("take_damage"):
 			var damage_info = calculate_damage()
 			area.take_damage(damage_info["damage"], damage_info["is_crit"])

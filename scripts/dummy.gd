@@ -69,7 +69,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if area.name == "hitbox" or area.name == "sword":
 		var player = get_tree().get_first_node_in_group("Player")
 		if player:
-			var damage_info = player.calculate_damage()
+			var damage_info = player.get_node("PlayerAttack").calculate_damage()
 			take_damage(damage_info["damage"], damage_info["is_crit"])
 			print("Took melee damage: ", damage_info["damage"], " Critical: ", damage_info["is_crit"])
 	elif area.has_method("calculate_damage"):
@@ -111,7 +111,7 @@ func die():
 	remove_from_group("Targetable")  # Remove from targetable group
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
-	emit_signal("dummy_died", position)
+	emit_signal("dummy_died", initial_position)  # Emit signal with initial position
 	# Don't queue_free immediately, let the signal propagate first
 	await get_tree().create_timer(0.1).timeout
 	queue_free()

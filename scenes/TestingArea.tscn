@@ -55,12 +55,12 @@ position = Vector2(0.00012207, 0)
 scale = Vector2(0.899219, 0.897222)
 texture = ExtResource("9_led6v")
 
-[node name="Player" parent="GameWorld" groups=["Player"] instance=ExtResource("4_q43k7")]
+[node name="Player" parent="GameWorld" instance=ExtResource("4_q43k7")]
 texture_filter = 5
 position = Vector2(-255, 0)
 platform_on_leave = 2
 
-[node name="DodgeRecovery" parent="GameWorld/Player" index="6"]
+[node name="DodgeRecovery" parent="GameWorld/Player" index="9"]
 one_shot = false
 
 [node name="Dummy Manager" parent="GameWorld" instance=ExtResource("2_ahoaf")]
@@ -70,7 +70,6 @@ position = Vector2(0, 0)
 position = Vector2(-403, -212)
 
 [node name="Camera2D" type="Camera2D" parent="GameWorld" groups=["UI"]]
-position = Vector2(0, 8)
 scale = Vector2(0.354, 0.354)
 
 [editable path="GameWorld/Player"]

@@ -6,14 +6,15 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_k77jk"]
 radius = 89.89
 
-[node name="Selector" type="StaticBody2D"]
+[node name="Selector" type="Area2D" groups=["Targetable", "UI"]]
 script = ExtResource("1_jxmd6")
 
-[node name="selector" type="Sprite2D" parent="."]
+[node name="selector" type="Sprite2D" parent="." groups=["UI"]]
 scale = Vector2(2, 2)
 texture = ExtResource("2_0wrl6")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="selectorhitbox" type="CollisionShape2D" parent="." groups=["UI"]]
+z_index = 2
 position = Vector2(0, -0.5)
 scale = Vector2(2.04, 2)
 shape = SubResource("CircleShape2D_k77jk")

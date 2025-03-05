@@ -1,8 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://bddudkfbtetv1"]
+[gd_scene load_steps=13 format=3 uid="uid://bddudkfbtetv1"]
 
 [ext_resource type="Script" path="res://scripts/Player.gd" id="1_xyfxo"]
+[ext_resource type="Script" path="res://scripts/PlayerMovement.gd" id="2_61f6j"]
 [ext_resource type="Texture2D" uid="uid://da0velrvs3rcs" path="res://assets/icon.svg" id="2_havk4"]
+[ext_resource type="Script" path="res://scripts/PlayerAttack.gd" id="3_gsa3p"]
 [ext_resource type="Texture2D" uid="uid://bk0xidxd5dmmy" path="res://assets/healthframe.png" id="3_lu8wt"]
+[ext_resource type="Script" path="res://scripts/PlayerHealth.gd" id="4_ursou"]
 [ext_resource type="Texture2D" uid="uid://bnbvvycx07af6" path="res://assets/healthbar.png" id="4_x10p8"]
 [ext_resource type="Script" path="res://scripts/health_bar.gd" id="5_gpk5f"]
 [ext_resource type="Script" path="res://scripts/dash_count.gd" id="6_ns87m"]
@@ -14,35 +17,33 @@
 radius = 11.2994
 height = 96.0452
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["Player"]]
 position = Vector2(318, 329)
 scale = Vector2(0.354, 0.354)
 input_pickable = true
 script = ExtResource("1_xyfxo")
+
+[node name="PlayerMovement" type="Node2D" parent="."]
+script = ExtResource("2_61f6j")
+
+[node name="PlayerAttack" type="Node2D" parent="."]
+script = ExtResource("3_gsa3p")
+
+[node name="PlayerHealth" type="Node2D" parent="."]
+script = ExtResource("4_ursou")
 
 [node name="PlayerSprite" type="Sprite2D" parent="."]
 position = Vector2(7.62939e-06, 0.00012207)
 texture = ExtResource("2_havk4")
 metadata/_edit_lock_ = true
 
-[node name="PlayerCollision" type="CollisionShape2D" parent="."]
+[node name="PlayerCollision" type="CollisionShape2D" parent="." groups=["Player"]]
 position = Vector2(0, 0.00012207)
 scale = Vector2(6.486, 6.387)
 shape = SubResource("RectangleShape2D_yum8d")
 metadata/_edit_lock_ = true
 
 [node name="Projectiles" type="Node2D" parent="." groups=["Effect"]]
-
-[node name="HealthBar" type="TextureProgressBar" parent="." groups=["UI"]]
-offset_left = -98.8701
-offset_top = 67.7966
-offset_right = 101.13
-offset_bottom = 117.797
-value = 100.0
-rounded = true
-texture_under = ExtResource("3_lu8wt")
-texture_progress = ExtResource("4_x10p8")
-script = ExtResource("5_gpk5f")
 
 [node name="DashCount" type="Label" parent="." groups=["UI"]]
 layout_direction = 2
@@ -63,6 +64,17 @@ size_flags_vertical = 6
 size_flags_stretch_ratio = 3.58
 uppercase = true
 script = ExtResource("6_ns87m")
+
+[node name="HealthBar" type="TextureProgressBar" parent="." groups=["UI"]]
+offset_left = -98.8701
+offset_top = 67.7966
+offset_right = 101.13
+offset_bottom = 117.797
+value = 100.0
+rounded = true
+texture_under = ExtResource("3_lu8wt")
+texture_progress = ExtResource("4_x10p8")
+script = ExtResource("5_gpk5f")
 
 [node name="DodgeTimer" type="Timer" parent="."]
 wait_time = 0.1

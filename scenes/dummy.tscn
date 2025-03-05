@@ -16,7 +16,7 @@ scale = Vector2(0.354, 0.354)
 collision_layer = 2
 script = ExtResource("1_53g3u")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="DummyHitbox" type="CollisionShape2D" parent="."]
 position = Vector2(-1.0848e-05, -2.44379e-05)
 shape = SubResource("RectangleShape2D_56yub")
 

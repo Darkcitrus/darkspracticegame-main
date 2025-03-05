@@ -10,17 +10,17 @@ func _ready():
 		connect_dummy(first_dummy)
 		print("DummyManager: Connected to first dummy")
 
-func _on_dummy_died(_pos):
+func _on_dummy_died(pos: Vector2):
 	print("DummyManager: Dummy died, respawning in 1 second...")
 	await get_tree().create_timer(1.0).timeout
-	spawn_new_dummy()
+	spawn_new_dummy(pos)
 
-func spawn_new_dummy():
+func spawn_new_dummy(pos: Vector2):
 	var new_dummy = dummy_scene.instantiate()
 	add_child(new_dummy)
-	new_dummy.position = spawn_position
+	new_dummy.position = pos
 	connect_dummy(new_dummy)
-	print("DummyManager: New dummy spawned")
+	print("DummyManager: New dummy spawned at position: ", pos)
 
 func connect_dummy(dummy):
 	if not dummy.is_connected("dummy_died", _on_dummy_died):
