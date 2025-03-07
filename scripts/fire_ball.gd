@@ -4,21 +4,15 @@ extends Area2D
 
 const ExplosionEffect = preload("res://scenes/explosion_effect.tscn")
 # Node References
-# Timer that controls how long the fireball exists before self-destructing
 @onready var fire_ball_vanish: Timer = $FireBallVanish
 
 # Movement Properties
-# Direction vector that determines where the fireball will travel
 var direction: Vector2 = Vector2.ZERO  # Initialize to zero vector
-# Initial speed at which the fireball moves (in pixels per second)
 var current_speed: float = 100  
-# Maximum speed the fireball can reach (in pixels per second)
 const MAX_SPEED: float = 12000   
-# Speed multiplier per second (greater than 1 for exponential growth)
 const SPEED_MULTIPLIER: float = 20
 
 # Damage Properties
-# Base damage for fireball
 var damage: float = 15  
 var crit_chance: float = 0.2  # 20% chance to crit
 var crit_multiplier: float = 1.5  # 50% more damage on crit
@@ -32,6 +26,7 @@ func initialize(new_direction: Vector2, new_target = null):
 	direction = new_direction.normalized()
 	if is_instance_valid(new_target) and new_target.is_in_group("Targetable"):
 		target = new_target
+		print("Fireball targeting: ", target.name)
 	# Set a smaller scale for the fireball
 	scale = Vector2(0.5, 0.5)  # Adjust this value to get the desired size
 
@@ -43,13 +38,14 @@ func _ready():
 	monitoring = true
 	monitorable = true
 	
-	# Connect collision signals
-	if not area_entered.is_connected(_on_area_entered):
-		area_entered.connect(_on_area_entered)
-	if not body_entered.is_connected(_on_body_entered):
-		body_entered.connect(_on_body_entered)
+	# Connect collision signals with better error handling
+	if not is_connected("area_entered", _on_area_entered):
+		connect("area_entered", _on_area_entered)
+	if not is_connected("body_entered", _on_body_entered):
+		connect("body_entered", _on_body_entered)
 		
 	fire_ball_vanish.start()
+	print("Fireball ready with signals connected")
 
 # Called every frame to update the fireball's position
 func _process(delta):
@@ -65,41 +61,69 @@ func _process(delta):
 	current_speed = min(current_speed * pow(SPEED_MULTIPLIER, delta), MAX_SPEED)
 	# Move the fireball with the current speed using global_position
 	global_position += direction * current_speed * delta
-	pass
+	
+	# Check for direct collision with target
+	if is_instance_valid(target):
+		var distance_to_target = global_position.distance_to(target.global_position)
+		if distance_to_target < 30:  # Close enough to count as a hit
+			print("FIREBALL: Direct hit on target detected by proximity")
+			_handle_hit(target)
 
 # Signal Handlers
-# Called when the fireball collides with another body
 func _on_body_entered(body: Node2D) -> void:
-	print("Fireball hit body: ", body.name, " in groups: ", body.get_groups())
-	# Check self-destruction if body or its parent is in Enemy or if body is in World, but not UI
-	var hit_enemy = body.is_in_group("Enemy") or (body.get_parent() and body.get_parent().is_in_group("Enemy"))
-	if (hit_enemy or body.is_in_group("World")) and not body.is_in_group("UI"):
-		if body.has_method("take_damage"):
-			var damage_info = calculate_damage()
-			body.take_damage(damage_info["damage"], damage_info["is_crit"])
-		spawn_explosion_effect()
-		queue_free()  # Self-delete upon contact
+	print("FIREBALL: Hit body: ", body.name, " Groups: ", body.get_groups())
+	
+	# Enhanced detection
+	if body.is_in_group("Enemy"):
+		print("FIREBALL: Valid enemy body hit!")
+		_handle_hit(body)
+	elif body.is_in_group("World"):
+		print("FIREBALL: World body hit!")
+		_handle_hit(body)
+	# Special case for targeting
+	elif is_instance_valid(target) and body == target:
+		print("FIREBALL: Direct target body hit!")
+		_handle_hit(target)
+	else:
+		print("FIREBALL: Non-target collision with: ", body.name)
 
-# Called when the fireball enters another area
 func _on_area_entered(area: Area2D) -> void:
-	print("Fireball hit area: ", area.name, " in groups: ", area.get_groups())
-	# Check self-destruction if area or its parent is in Enemy or if area is in World, but not UI
-	var hit_enemy = area.is_in_group("Enemy") or (area.get_parent() and area.get_parent().is_in_group("Enemy"))
-	if (hit_enemy or area.is_in_group("World")) and not area.is_in_group("UI"):
-		if area.has_method("take_damage"):
-			var damage_info = calculate_damage()
-			area.take_damage(damage_info["damage"], damage_info["is_crit"])
-		spawn_explosion_effect()
-		queue_free()  # Self-delete upon contact
+	print("FIREBALL: Hit area: ", area.name, " Groups: ", area.get_groups())
+	
+	# Enhanced detection
+	if area.is_in_group("Enemy"):
+		print("FIREBALL: Valid enemy area hit!")
+		_handle_hit(area)
+	elif area.is_in_group("World"):
+		print("FIREBALL: World area hit!")
+		_handle_hit(area)
+	# Special case for targeting
+	elif is_instance_valid(target) and area == target:
+		print("FIREBALL: Direct target area hit!")
+		_handle_hit(target)
+	else:
+		print("FIREBALL: Non-target collision with: ", area.name)
+
+# Centralized hit handling to ensure proper destruction
+func _handle_hit(object):
+	# Try to apply damage if possible
+	if object.has_method("take_damage"):
+		var damage_info = calculate_damage()
+		object.take_damage(damage_info["damage"], damage_info["is_crit"])
+		print("FIREBALL: Damage applied: ", damage_info["damage"])
+	
+	# Spawn effect and destroy - using immediate destruction for reliability
+	spawn_explosion_effect()
+	print("FIREBALL: Destroying fireball NOW")
+	queue_free()  # Immediate destruction
 
 # Timer callback
-# Called when the fireball's lifetime expires
 func _on_fire_ball_vanish_timeout():
+	print("FIREBALL: Timeout reached, self-destructing")
 	spawn_explosion_effect()
 	queue_free()
 
 func get_damage() -> float:
-	print("Fireball damage requested: ", damage)
 	return damage
 
 func spawn_explosion_effect():

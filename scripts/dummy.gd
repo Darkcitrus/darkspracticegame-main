@@ -10,6 +10,7 @@ var max_health = 100
 var damage = 15
 var alive = true
 var initial_position: Vector2
+var oscillation_start_time: float = 0.0
 
 # Add exported variables for oscillation
 @export var amplitude: float = 20
@@ -22,17 +23,17 @@ var initial_position: Vector2
 func _ready():
 	add_to_group("Enemy")  # Add dummy to Enemy group
 	add_to_group("Targetable")  # Add to Targetable group for fireball targeting
-	initial_position = position  # Store initial position for respawn
 	
-	# Set up collisions and mouse detection
-	input_pickable = true
+	# Store initial position and oscillation time
+	initial_position = position
+	oscillation_start_time = Time.get_ticks_msec() / 1000.0
+	
+	# Set up collisions - REMOVED mouse detection settings
 	monitoring = true
 	monitorable = true
 	
-	# Connect area signals
+	# Connect area signals - REMOVED mouse signals
 	area_entered.connect(_on_area_entered)
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
 	
 	# Initialize health and healthbar
 	health = max_health
@@ -42,8 +43,7 @@ func _ready():
 		healthbar.show()
 		print("Dummy healthbar initialized. Max health: ", max_health)
 	
-	set_process_input(true)  # Ensure the node processes input
-	input_pickable = true  # Ensure the Area2D node can detect mouse input
+	# Ensure selector is properly set up
 	if selector:
 		selector.visible = false  # Hide selector initially
 		print("Selector initialized and hidden")
@@ -53,7 +53,9 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	# Update vertical position with a sine wave oscillation
-	position.y = initial_position.y + sin(Time.get_ticks_msec() / 1000.0 * frequency * PI * 2) * amplitude
+	# Use relative time from spawn to keep oscillation consistent
+	var time = Time.get_ticks_msec() / 1000.0 - oscillation_start_time
+	position.y = initial_position.y + sin(time * frequency * PI * 2) * amplitude
 	pass
 
 func _on_area_entered(area: Area2D) -> void:
@@ -106,37 +108,20 @@ func die():
 	if not alive:
 		return
 	alive = false
-	print("Dummy died!")
+	print("Dummy died at position: ", position, " Initial position was: ", initial_position)
 	visible = false
 	remove_from_group("Targetable")  # Remove from targetable group
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
+	# Pass the INITIAL position for respawning, not the current oscillated position
 	emit_signal("dummy_died", initial_position)  # Emit signal with initial position
 	# Don't queue_free immediately, let the signal propagate first
 	await get_tree().create_timer(0.1).timeout
 	queue_free()
 
-func _on_mouse_entered() -> void:
-	print("Mouse entered dummy area")
-	if selector and alive:
-		selector.show()  # Try using show() instead of visible
-		print("Mouse entered dummy")
-		# Also set the player's target
-		var player = get_tree().get_first_node_in_group("Player")
-		if player:
-			player.set_current_target(self)
-
-func _on_mouse_exited() -> void:
-	print("Mouse exited dummy area")
-	if selector and alive:
-		selector.hide()  # Try using hide() instead of visible
-		print("Mouse exited dummy")
-		# Clear the player's target
-		var player = get_tree().get_first_node_in_group("Player")
-		if player:
-			player.clear_current_target()
-
 # Ensure initial position is reset correctly on respawn
 func reset_position(pos: Vector2):
 	initial_position = pos
 	position = pos
+	oscillation_start_time = Time.get_ticks_msec() / 1000.0
+	print("Dummy reset to position: ", pos)

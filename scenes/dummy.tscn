@@ -1,22 +1,28 @@
-[gd_scene load_steps=8 format=3 uid="uid://b3eww6lpmfxuk"]
+[gd_scene load_steps=10 format=3 uid="uid://b3eww6lpmfxuk"]
 
 [ext_resource type="Script" path="res://scripts/Dummy.gd" id="1_53g3u"]
 [ext_resource type="Texture2D" uid="uid://cv5hb07u0263t" path="res://assets/enemyph.png" id="2_4gxho"]
 [ext_resource type="Texture2D" uid="uid://bk0xidxd5dmmy" path="res://assets/healthframe.png" id="3_wqc6b"]
 [ext_resource type="Texture2D" uid="uid://bnbvvycx07af6" path="res://assets/healthbar.png" id="4_kk1w2"]
 [ext_resource type="Script" path="res://scripts/health_bar.gd" id="5_ud4r4"]
+[ext_resource type="Script" path="res://scripts/mouse_detector.gd" id="6_0lsll"]
 [ext_resource type="PackedScene" uid="uid://bm21v60srx58p" path="res://scenes/selector.tscn" id="6_64mbj"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_56yub"]
 size = Vector2(87.5704, 81.9209)
 
-[node name="Dummy" type="Area2D" groups=["Enemy"]]
+[sub_resource type="CircleShape2D" id="CircleShape2D_amfdd"]
+radius = 150.0
+
+[node name="Dummy" type="Area2D" groups=["Enemy", "Targetable"]]
 position = Vector2(576, 327)
 scale = Vector2(0.354, 0.354)
 collision_layer = 2
 script = ExtResource("1_53g3u")
+amplitude = 100.0
+frequency = 0.5
 
-[node name="DummyHitbox" type="CollisionShape2D" parent="."]
+[node name="DummyHitbox" type="CollisionShape2D" parent="." groups=["Enemy", "Targetable"]]
 position = Vector2(-1.0848e-05, -2.44379e-05)
 shape = SubResource("RectangleShape2D_56yub")
 
@@ -40,6 +46,14 @@ script = ExtResource("5_ud4r4")
 
 [node name="RespawnTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="MouseDetector" type="Area2D" parent="." groups=["UI"]]
+script = ExtResource("6_0lsll")
+
+[node name="mousedetectorhitbox" type="CollisionShape2D" parent="MouseDetector" groups=["UI"]]
+z_index = 3
+z_as_relative = false
+shape = SubResource("CircleShape2D_amfdd")
 
 [node name="Selector" parent="." instance=ExtResource("6_64mbj")]
 texture_filter = 1

@@ -1,6 +1,8 @@
 extends Node
 
 var player: Node = null
+var last_fireball_time: float = 0.0  # Track when the last fireball was fired
+const FIREBALL_COOLDOWN: float = 0.1  # 0.1 second cooldown between fireballs
 
 func initialize(player_node: Node):
 	player = player_node
@@ -150,15 +152,23 @@ func point_sword_to_mouse():
 
 func shoot_fireball():
 	if Input.is_action_just_pressed("ui_e"):
-		if is_instance_valid(player.current_target) and player.current_target.is_in_group("Targetable"):
-			print("Shooting fireball at target: ", player.current_target.name)
-			var fireball = player.fire_ball.instantiate()
-			player.get_tree().root.add_child(fireball)
-			fireball.global_position = player.global_position
-			fireball.initialize(player.attack_direction, player.current_target)
-		else:
-			print("No valid target selected!")
-			player.current_target = null
+		# Get current time
+		var current_time = Time.get_ticks_msec() / 1000.0
+		
+		# Check if cooldown has passed
+		if current_time - last_fireball_time >= FIREBALL_COOLDOWN:
+			if is_instance_valid(player.current_target) and player.current_target.is_in_group("Targetable"):
+				print("Shooting fireball at target: ", player.current_target.name)
+				var fireball = player.fire_ball.instantiate()
+				player.get_tree().root.add_child(fireball)
+				fireball.global_position = player.global_position
+				fireball.initialize(player.attack_direction, player.current_target)
+				
+				# Update the last fireball time
+				last_fireball_time = current_time
+			else:
+				print("No valid target selected!")
+				player.current_target = null
 
 func calculate_damage(base_damage: float = player.attack_power) -> Dictionary:
 	var roll = randf()  # Get the random roll

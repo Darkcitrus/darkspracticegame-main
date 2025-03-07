@@ -8,10 +8,12 @@ func _ready():
 		var first_dummy = get_child(0)
 		spawn_position = first_dummy.position
 		connect_dummy(first_dummy)
-		print("DummyManager: Connected to first dummy")
+		# Make sure initial position is set correctly for the first dummy
+		first_dummy.reset_position(spawn_position)
+		print("DummyManager: Connected to first dummy at position ", spawn_position)
 
 func _on_dummy_died(pos: Vector2):
-	print("DummyManager: Dummy died, respawning in 1 second...")
+	print("DummyManager: Dummy died at position ", pos, ", respawning in 1 second...")
 	await get_tree().create_timer(1.0).timeout
 	spawn_new_dummy(pos)
 
@@ -20,6 +22,8 @@ func spawn_new_dummy(pos: Vector2):
 	add_child(new_dummy)
 	new_dummy.position = pos
 	connect_dummy(new_dummy)
+	# Explicitly reset position to ensure oscillation starts correctly
+	new_dummy.reset_position(pos)
 	print("DummyManager: New dummy spawned at position: ", pos)
 
 func connect_dummy(dummy):

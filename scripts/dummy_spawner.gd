@@ -10,9 +10,12 @@ func spawn_dummy(pos: Vector2):
 		# Create new dummy
 		var new_dummy = dummy_scene.instantiate()
 		add_child(new_dummy)
-		new_dummy.position = pos
+		new_dummy.position = pos  # Set position before reset_position
 		new_dummy.connect("dummy_died", Callable(self, "_on_dummy_died"))
-		new_dummy.reset_position(pos)  # Ensure initial position is set correctly
+		# Reset position to ensure oscillation works correctly from this point
+		new_dummy.reset_position(pos)
+		print("Dummy spawner: New dummy spawned at: ", pos)
 
 func _on_dummy_died(pos: Vector2):
+	print("Dummy spawner: Dummy died, respawning at: ", pos)
 	spawn_dummy(pos)
