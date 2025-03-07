@@ -135,3 +135,8 @@ func _on_mouse_exited() -> void:
 		var player = get_tree().get_first_node_in_group("Player")
 		if player:
 			player.clear_current_target()
+
+# Ensure initial position is reset correctly on respawn
+func reset_position(pos: Vector2):
+	initial_position = pos
+	position = pos
