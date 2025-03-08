@@ -2,7 +2,9 @@
 # The fireball is an Area2D node that moves in a specified direction and destroys itself upon collision or timeout
 extends Area2D
 
-const ExplosionEffect = preload("res://scenes/explosion_effect.tscn")
+# Use safer resource loading with error checking
+var ExplosionEffect = null
+
 # Node References
 @onready var fire_ball_vanish: Timer = $FireBallVanish
 
@@ -31,6 +33,12 @@ func initialize(new_direction: Vector2, new_target = null):
 	scale = Vector2(0.5, 0.5)  # Adjust this value to get the desired size
 
 func _ready():
+	# Load the explosion effect with error checking
+	if ResourceLoader.exists("res://scenes/explosion_effect.tscn"):
+		ExplosionEffect = load("res://scenes/explosion_effect.tscn")
+	else:
+		push_error("Could not load explosion effect resource!")
+		
 	print("Fireball created with damage: ", damage)
 	add_to_group("Effects")
 	
@@ -38,13 +46,18 @@ func _ready():
 	monitoring = true
 	monitorable = true
 	
-	# Connect collision signals with better error handling
+	# Connect collision signals with better error handling and protection
 	if not is_connected("area_entered", _on_area_entered):
 		connect("area_entered", _on_area_entered)
 	if not is_connected("body_entered", _on_body_entered):
 		connect("body_entered", _on_body_entered)
-		
-	fire_ball_vanish.start()
+	
+	# Make sure the timer exists before starting it
+	if fire_ball_vanish:
+		fire_ball_vanish.start()
+	else:
+		push_error("FireBallVanish timer not found!")
+	
 	print("Fireball ready with signals connected")
 
 # Called every frame to update the fireball's position
@@ -129,9 +142,17 @@ func get_damage() -> float:
 func spawn_explosion_effect():
 	if not is_instance_valid(self):
 		return
-	var explosion = ExplosionEffect.instantiate()
-	explosion.global_position = global_position
-	get_tree().get_root().add_child(explosion)
+		
+	if ExplosionEffect:
+		var explosion = ExplosionEffect.instantiate()
+		if explosion:
+			explosion.global_position = global_position
+			# Use safe way to add to scene
+			var root = get_tree().get_root()
+			if root:
+				root.add_child(explosion)
+	else:
+		print("WARNING: ExplosionEffect resource not available")
 
 func calculate_damage() -> Dictionary:
 	var is_crit = randf() < crit_chance

@@ -157,15 +157,32 @@ func shoot_fireball():
 		
 		# Check if cooldown has passed
 		if current_time - last_fireball_time >= FIREBALL_COOLDOWN:
-			if is_instance_valid(player.current_target) and player.current_target.is_in_group("Targetable"):
-				print("Shooting fireball at target: ", player.current_target.name)
-				var fireball = player.fire_ball.instantiate()
-				player.get_tree().root.add_child(fireball)
-				fireball.global_position = player.global_position
-				fireball.initialize(player.attack_direction, player.current_target)
+			# Make sure player exists
+			if not is_instance_valid(player):
+				return
 				
-				# Update the last fireball time
-				last_fireball_time = current_time
+			# Make sure player has a valid target
+			if is_instance_valid(player.current_target) and player.current_target.is_in_group("Targetable"):
+				# Make sure fireball resource exists
+				if player.fire_ball != null:
+					print("Shooting fireball at target: ", player.current_target.name)
+					
+					# Safer instantiation
+					var fireball = player.fire_ball.instantiate()
+					if fireball:
+						# Use safer scene tree access
+						var scene_root = player.get_tree().get_root()
+						if scene_root:
+							scene_root.add_child(fireball)
+							fireball.global_position = player.global_position
+							fireball.initialize(player.attack_direction, player.current_target)
+							
+							# Update the last fireball time
+							last_fireball_time = current_time
+					else:
+						push_error("Failed to instantiate fireball!")
+				else:
+					push_error("Fireball resource is null!")
 			else:
 				print("No valid target selected!")
 				player.current_target = null

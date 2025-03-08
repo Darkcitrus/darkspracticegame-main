@@ -14,7 +14,7 @@ var swinging: bool = false  # Track if the sword is currently swinging
 var current_tween: Tween = null  # Store the current tween
 var attack_cooldown = 0.3  # attack cooldown in seconds
 var last_attack_time = 0
-var fire_ball: PackedScene = preload("res://scenes/fire_ball.tscn")
+var fire_ball: PackedScene = null  # Use safer resource loading with error checking
 var health = 100
 var max_health = 100
 var crit_chance: float = 0.25
@@ -50,12 +50,22 @@ const DODGE_RECOVERY_TIME = 2.0
 func _ready():
 	add_to_group("Player") # Add player to Player group
 	randomize() # Seed the random number generator
+	
+	# Safely load the fireball resource
+	if ResourceLoader.exists("res://scenes/fire_ball.tscn"):
+		fire_ball = load("res://scenes/fire_ball.tscn")
+	else:
+		push_error("Could not load fireball resource!")
+	
+	# Safer timer setup
 	if not respawn_timer:
 		respawn_timer = Timer.new()
 		add_child(respawn_timer)
+	
 	respawn_timer.wait_time = 5.0
 	respawn_timer.one_shot = true
-	respawn_timer.timeout.connect(_on_respawn_timer_timeout)
+	if not respawn_timer.is_connected("timeout", _on_respawn_timer_timeout):
+		respawn_timer.connect("timeout", _on_respawn_timer_timeout)
 	
 	# Initialize health and healthbar
 	health = max_health
@@ -80,10 +90,13 @@ func _ready():
 	dodge_recovery.wait_time = 0.5  # Faster recovery
 	dodge_cooldown.wait_time = 0.1  # Short cooldown between dashes
 	
-	# Initialize sub-scripts
-	$PlayerMovement.initialize(self)
-	$PlayerAttack.initialize(self)
-	$PlayerHealth.initialize(self)
+	# Only initialize sub-scripts if they exist
+	if has_node("PlayerMovement"):
+		$PlayerMovement.initialize(self)
+	if has_node("PlayerAttack"):
+		$PlayerAttack.initialize(self)
+	if has_node("PlayerHealth"):
+		$PlayerHealth.initialize(self)
 
 func _physics_process(delta):
 	$PlayerMovement._physics_process(delta)
