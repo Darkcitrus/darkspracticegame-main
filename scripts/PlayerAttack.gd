@@ -151,7 +151,7 @@ func point_sword_to_mouse():
 		player.sword.global_position = player.global_position + direction_to_mouse * 40
 
 func shoot_fireball():
-	if Input.is_action_just_pressed("ui_e"):
+	if Input.is_action_pressed("ui_e"):  # Changed from is_action_just_pressed to is_action_pressed
 		# Get current time
 		var current_time = Time.get_ticks_msec() / 1000.0
 		

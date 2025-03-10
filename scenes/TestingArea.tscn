@@ -13,6 +13,16 @@
 [node name="Testing Area" type="Node2D" groups=["UI"]]
 script = ExtResource("1_4nlp4")
 
+[node name="Background" type="Sprite2D" parent="." groups=["World"]]
+show_behind_parent = true
+light_mask = 9
+visibility_layer = 15
+z_index = -10
+texture_filter = 1
+position = Vector2(576, 327)
+scale = Vector2(0.899219, 0.897222)
+texture = ExtResource("9_led6v")
+
 [node name="Menu" type="Node2D" parent="." groups=["UI"]]
 visible = false
 script = ExtResource("2_pkncg")
@@ -47,13 +57,11 @@ script = ExtResource("5_ob1lq")
 [node name="GameWorld" type="Node2D" parent="."]
 position = Vector2(576, 327)
 
-[node name="Background" type="Sprite2D" parent="GameWorld" groups=["World"]]
-light_mask = 9
-visibility_layer = 8
-texture_filter = 1
-position = Vector2(0.00012207, 0)
-scale = Vector2(0.899219, 0.897222)
-texture = ExtResource("9_led6v")
+[node name="Camera2D" type="Camera2D" parent="GameWorld" groups=["UI"]]
+light_mask = 15
+visibility_layer = 15
+z_index = 4
+scale = Vector2(0.354, 0.354)
 
 [node name="Player" parent="GameWorld" instance=ExtResource("4_q43k7")]
 texture_filter = 5
@@ -68,9 +76,6 @@ position = Vector2(0, 0)
 
 [node name="World Border" parent="GameWorld" groups=["World"] instance=ExtResource("3_8ers3")]
 position = Vector2(-403, -212)
-
-[node name="Camera2D" type="Camera2D" parent="GameWorld" groups=["UI"]]
-scale = Vector2(0.354, 0.354)
 
 [editable path="GameWorld/Player"]
 [editable path="GameWorld/Dummy Manager"]
