@@ -21,6 +21,7 @@ height = 96.0452
 position = Vector2(318, 329)
 scale = Vector2(0.354, 0.354)
 input_pickable = true
+motion_mode = 1
 script = ExtResource("1_xyfxo")
 
 [node name="PlayerMovement" type="Node2D" parent="."]
@@ -28,6 +29,7 @@ script = ExtResource("2_61f6j")
 
 [node name="PlayerAttack" type="Node2D" parent="."]
 script = ExtResource("3_gsa3p")
+FIREBALL_COOLDOWN = 0.2
 
 [node name="PlayerHealth" type="Node2D" parent="."]
 script = ExtResource("4_ursou")

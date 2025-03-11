@@ -66,7 +66,11 @@ scale = Vector2(0.354, 0.354)
 [node name="Player" parent="GameWorld" instance=ExtResource("4_q43k7")]
 texture_filter = 5
 position = Vector2(-255, 0)
+motion_mode = 1
 platform_on_leave = 2
+
+[node name="PlayerAttack" parent="GameWorld/Player" index="1"]
+FIREBALL_COOLDOWN = 0.1
 
 [node name="DodgeRecovery" parent="GameWorld/Player" index="9"]
 one_shot = false

@@ -2,10 +2,12 @@ extends Node
 
 var player: Node = null
 var last_fireball_time: float = 0.0  # Track when the last fireball was fired
-const FIREBALL_COOLDOWN: float = 0.1  # 0.1 second cooldown between fireballs
+@export var FIREBALL_COOLDOWN: float = 0.2  # Cooldown between fireballs
 
 func initialize(player_node: Node):
 	player = player_node
+	# Print the actual cooldown value being used to validate it was set correctly
+	print("Fireball cooldown initialized to: ", FIREBALL_COOLDOWN)
 
 func _physics_process(delta):
 	if player:
@@ -154,10 +156,10 @@ func shoot_fireball():
 	if Input.is_action_pressed("ui_e"):  # Changed from is_action_just_pressed to is_action_pressed
 		# Get current time
 		var current_time = Time.get_ticks_msec() / 1000.0
-		
+						
 		# Check if cooldown has passed
 		if current_time - last_fireball_time >= FIREBALL_COOLDOWN:
-			# Make sure player exists
+						# Make sure player exists
 			if not is_instance_valid(player):
 				return
 				
