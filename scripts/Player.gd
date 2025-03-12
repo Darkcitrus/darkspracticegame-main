@@ -20,6 +20,7 @@ var max_health = 100
 var crit_chance: float = 0.25
 var crit_damage: float = 2.0
 var alive: bool = true
+var target: Node2D = null  # For compatibility with scripts that might use 'target' directly
 var current_target: Node2D = null  # Add this near the other state variables
 
 # Movement variables
@@ -97,6 +98,10 @@ func _ready():
 		$PlayerAttack.initialize(self)
 	if has_node("PlayerHealth"):
 		$PlayerHealth.initialize(self)
+	
+	# Initialize target references
+	target = null
+	current_target = null
 
 func _physics_process(delta):
 	$PlayerMovement._physics_process(delta)
@@ -107,10 +112,12 @@ func _physics_process(delta):
 func _on_respawn_timer_timeout():
 	$PlayerHealth._on_respawn_timer_timeout()
 
-func set_current_target(target: Node2D) -> void:
-	current_target = target
-	print("Target set: ", target.name)
+func set_current_target(target_node: Node2D) -> void:
+	target = target_node  # Set both target variables for compatibility
+	current_target = target_node
+	print("Target set: ", target_node.name)
 
 func clear_current_target() -> void:
+	target = null  # Clear both target variables
 	current_target = null
 	print("Target cleared")

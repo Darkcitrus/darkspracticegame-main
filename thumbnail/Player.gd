@@ -18,6 +18,7 @@ var max_health = 100
 var crit_chance: float = 0.25
 var crit_damage = 2
 var alive: bool = true
+var target: Node2D = null  # For referencing the current target
 
 # Movement variables
 var run_speed = 250
