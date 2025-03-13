@@ -1,14 +1,14 @@
 [gd_scene load_steps=13 format=3 uid="uid://bddudkfbtetv1"]
 
-[ext_resource type="Script" path="res://scripts/Player.gd" id="1_xyfxo"]
-[ext_resource type="Script" path="res://scripts/PlayerMovement.gd" id="2_61f6j"]
+[ext_resource type="Script" uid="uid://dtmjukaqml2hg" path="res://scripts/Player.gd" id="1_xyfxo"]
+[ext_resource type="Script" uid="uid://c5ejhctead2w4" path="res://scripts/PlayerMovement.gd" id="2_61f6j"]
 [ext_resource type="Texture2D" uid="uid://da0velrvs3rcs" path="res://assets/icon.svg" id="2_havk4"]
-[ext_resource type="Script" path="res://scripts/PlayerAttack.gd" id="3_gsa3p"]
+[ext_resource type="Script" uid="uid://bb0tcdkt5uibc" path="res://scripts/PlayerAttack.gd" id="3_gsa3p"]
 [ext_resource type="Texture2D" uid="uid://bk0xidxd5dmmy" path="res://assets/healthframe.png" id="3_lu8wt"]
-[ext_resource type="Script" path="res://scripts/PlayerHealth.gd" id="4_ursou"]
+[ext_resource type="Script" uid="uid://d3wsn4opoq0n8" path="res://scripts/PlayerHealth.gd" id="4_ursou"]
 [ext_resource type="Texture2D" uid="uid://bnbvvycx07af6" path="res://assets/healthbar.png" id="4_x10p8"]
-[ext_resource type="Script" path="res://scripts/health_bar.gd" id="5_gpk5f"]
-[ext_resource type="Script" path="res://scripts/dash_count.gd" id="6_ns87m"]
+[ext_resource type="Script" uid="uid://bd4rw8f6jxyrh" path="res://scripts/health_bar.gd" id="5_gpk5f"]
+[ext_resource type="Script" uid="uid://dra4pmh0njenk" path="res://scripts/dash_count.gd" id="6_ns87m"]
 [ext_resource type="Texture2D" uid="uid://2ehgym06ft3d" path="res://assets/simplesword.png" id="7_d6qro"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yum8d"]
@@ -29,7 +29,6 @@ script = ExtResource("2_61f6j")
 
 [node name="PlayerAttack" type="Node2D" parent="."]
 script = ExtResource("3_gsa3p")
-FIREBALL_COOLDOWN = 0.2
 
 [node name="PlayerHealth" type="Node2D" parent="."]
 script = ExtResource("4_ursou")
@@ -48,6 +47,7 @@ metadata/_edit_lock_ = true
 [node name="Projectiles" type="Node2D" parent="." groups=["Effect"]]
 
 [node name="DashCount" type="Label" parent="." groups=["UI"]]
+texture_filter = 5
 layout_direction = 2
 anchors_preset = 8
 anchor_left = 0.5

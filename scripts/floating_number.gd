@@ -2,9 +2,9 @@ extends Label
 
 var start_pos: Vector2
 
-func setup(damage: float, is_crit: bool = false, pos: Vector2 = Vector2.ZERO):
+func setup(damage: int, is_crit: bool = false, pos: Vector2 = Vector2.ZERO):
 	# Set text and colors
-	text = str(round(damage)) + ("!" if is_crit else "")
+	text = str(damage) + ("!" if is_crit else "")
 	if is_crit:
 		add_theme_color_override("font_color", Color.YELLOW)
 	else:
