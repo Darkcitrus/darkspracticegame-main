@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://dn4hf7rryawqk"]
+
+[ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="1_ea1x0"]
+[ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_e08lw"]
+[ext_resource type="PackedScene" uid="uid://o888u5fliew8" path="res://scenes/world_border.tscn" id="3_e3xe6"]
+
+[node name="GameWorld" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="." groups=["UI"]]
+light_mask = 15
+visibility_layer = 15
+z_index = 4
+scale = Vector2(0.354, 0.354)
+
+[node name="Player" parent="." instance=ExtResource("1_ea1x0")]
+texture_filter = 5
+position = Vector2(-255, 0)
+platform_on_leave = 2
+
+[node name="PlayerAttack" parent="Player" index="1"]
+FIREBALL_COOLDOWN = 0.1
+
+[node name="DodgeRecovery" parent="Player" index="9"]
+one_shot = false
+
+[node name="Dummy Manager" parent="." instance=ExtResource("2_e08lw")]
+
+[node name="Dummy" parent="Dummy Manager" index="0"]
+scale = Vector2(0.45, 0.45)
+
+[node name="World Border" parent="." groups=["World"] instance=ExtResource("3_e3xe6")]
+position = Vector2(-403, -212)
+
+[editable path="Player"]
+[editable path="Dummy Manager"]
+[editable path="Dummy Manager/Dummy"]
+[editable path="Dummy Manager/Dummy/Selector"]
+[editable path="World Border"]

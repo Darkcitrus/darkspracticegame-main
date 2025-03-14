@@ -1,14 +1,13 @@
 [gd_scene load_steps=3 format=3 uid="uid://d3mu8vdkubyp8"]
 
-[ext_resource type="Script" path="res://scripts/dummy_manager.gd" id="1_yb1pn"]
+[ext_resource type="Script" uid="uid://cpf83cuyfkaxq" path="res://scripts/dummy_manager.gd" id="1_yb1pn"]
 [ext_resource type="PackedScene" uid="uid://b3eww6lpmfxuk" path="res://scenes/dummy.tscn" id="2_4qj6t"]
 
 [node name="Dummy Manager" type="Node2D"]
-position = Vector2(576, 327)
 script = ExtResource("1_yb1pn")
 
 [node name="Dummy" parent="." instance=ExtResource("2_4qj6t")]
-position = Vector2(0, 0)
+scale = Vector2(0.45, 0.45)
 
 [editable path="Dummy"]
 [editable path="Dummy/Selector"]

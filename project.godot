@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Our Game"
-run/main_scene="res://scenes/TestingArea.tscn"
+run/main_scene="uid://dr8wqxdc6v7wn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://assets/icon.svg"
 

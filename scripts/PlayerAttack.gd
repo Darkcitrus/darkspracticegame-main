@@ -159,7 +159,7 @@ func shoot_fireball():
 						
 		# Check if cooldown has passed
 		if current_time - last_fireball_time >= FIREBALL_COOLDOWN:
-						# Make sure player exists
+			# Make sure player exists
 			if not is_instance_valid(player):
 				return
 				
@@ -177,7 +177,8 @@ func shoot_fireball():
 						if scene_root:
 							scene_root.add_child(fireball)
 							fireball.global_position = player.global_position
-							fireball.initialize(player.attack_direction, player.current_target)
+							# Pass the player as the source of the fireball
+							fireball.initialize(player.attack_direction, player.current_target, -1, -1, -1, true, player)
 							
 							# Update the last fireball time
 							last_fireball_time = current_time

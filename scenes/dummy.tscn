@@ -1,11 +1,11 @@
 [gd_scene load_steps=10 format=3 uid="uid://b3eww6lpmfxuk"]
 
-[ext_resource type="Script" path="res://scripts/Dummy.gd" id="1_53g3u"]
+[ext_resource type="Script" uid="uid://d1j12u38ej1eb" path="res://scripts/Dummy.gd" id="1_53g3u"]
 [ext_resource type="Texture2D" uid="uid://cv5hb07u0263t" path="res://assets/enemyph.png" id="2_4gxho"]
 [ext_resource type="Texture2D" uid="uid://bk0xidxd5dmmy" path="res://assets/healthframe.png" id="3_wqc6b"]
 [ext_resource type="Texture2D" uid="uid://bnbvvycx07af6" path="res://assets/healthbar.png" id="4_kk1w2"]
-[ext_resource type="Script" path="res://scripts/health_bar.gd" id="5_ud4r4"]
-[ext_resource type="Script" path="res://scripts/mouse_detector.gd" id="6_0lsll"]
+[ext_resource type="Script" uid="uid://bd4rw8f6jxyrh" path="res://scripts/health_bar.gd" id="5_ud4r4"]
+[ext_resource type="Script" uid="uid://bkse82h1hr1bo" path="res://scripts/mouse_detector.gd" id="6_0lsll"]
 [ext_resource type="PackedScene" uid="uid://bm21v60srx58p" path="res://scenes/selector.tscn" id="6_64mbj"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_56yub"]
@@ -15,8 +15,6 @@ size = Vector2(87.5704, 81.9209)
 radius = 150.0
 
 [node name="Dummy" type="Area2D" groups=["Enemy", "Targetable"]]
-position = Vector2(576, 327)
-scale = Vector2(0.354, 0.354)
 collision_layer = 2
 script = ExtResource("1_53g3u")
 amplitude = 100.0

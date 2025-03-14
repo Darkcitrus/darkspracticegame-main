@@ -50,6 +50,7 @@ const DODGE_RECOVERY_TIME = 2.0
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	add_to_group("Player") # Add player to Player group
+	add_to_group("Targetable") # Add player to Targetable group so fireballs can target
 	randomize() # Seed the random number generator
 	
 	# Safely load the fireball resource
@@ -121,3 +122,25 @@ func clear_current_target() -> void:
 	target = null  # Clear both target variables
 	current_target = null
 	print("Target cleared")
+
+# Add this function to handle damage from fireballs and other sources
+func take_damage(amount: float, is_crit: bool = false):
+	if not alive:
+		return
+	
+	print("Player taking damage: ", amount, " Critical: ", is_crit)
+	health -= amount
+	
+	# Update healthbar if it exists
+	if healthbar:
+		healthbar.value = health
+		print("Player health now: ", health)
+	
+	# Check for player death
+	if health <= 0 and alive:
+		alive = false
+		print("Player died!")
+		visible = false
+		# Start respawn timer
+		if respawn_timer:
+			respawn_timer.start()
