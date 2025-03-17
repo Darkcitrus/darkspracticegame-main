@@ -16,6 +16,16 @@ var oscillation_start_time: float = 0.0
 @export var amplitude: float = 20
 @export var frequency: float = 1.0
 
+# Knockback properties
+var knockback_active = false
+var knockback_direction = Vector2.ZERO
+var knockback_strength = 100.0  # Base knockback strength
+var knockback_recovery_speed = 40.0  # How fast the dummy returns to original position
+var knockback_remaining_time = 0.0
+var knockback_max_time = 0.2  # Knockback duration in seconds
+var knockback_position_offset = Vector2.ZERO
+var knockback_return_active = false
+
 # Fireball properties
 @export var shoots_fireballs: bool = true
 @export var fireball_frequency: float = 2.0  # How often to shoot fireballs (in seconds)
@@ -88,11 +98,37 @@ func _ready():
 		print("Dummy: Registered original scale with parent: ", scale)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	# Update vertical position with a sine wave oscillation
-	# Use relative time from spawn to keep oscillation consistent
+func _process(delta):
+	# Handle knockback movement
+	if knockback_active:
+		# Move in knockback direction
+		knockback_remaining_time -= delta
+		if knockback_remaining_time <= 0:
+			knockback_active = false
+			knockback_return_active = true
+		else:
+			# Apply knockback movement
+			knockback_position_offset += knockback_direction * knockback_strength * delta
+	
+	# Handle returning after knockback
+	if knockback_return_active and not knockback_active:
+		# Return to original position
+		var return_direction = -knockback_position_offset.normalized()
+		var return_distance = knockback_recovery_speed * delta
+		if knockback_position_offset.length() <= return_distance:
+			# We're close enough - snap back to exact position
+			knockback_position_offset = Vector2.ZERO
+			knockback_return_active = false
+		else:
+			# Move towards original position
+			knockback_position_offset += return_direction * return_distance
+	
+	# Calculate oscillation - always maintain this regardless of knockback
 	var time = Time.get_ticks_msec() / 1000.0 - oscillation_start_time
-	position.y = initial_position.y + sin(time * frequency * PI * 2) * amplitude
+	var oscillation_offset = Vector2(0, sin(time * frequency * PI * 2) * amplitude)
+	
+	# Apply both oscillation and knockback to position
+	position = initial_position + oscillation_offset + knockback_position_offset
 	
 	# Always check for player as potential target
 	if shoots_fireballs and alive:
@@ -136,6 +172,9 @@ func take_damage(amount, is_crit: bool = false):
 	print("DUMMY DAMAGE - Amount: ", amount, " Is Crit: ", is_crit)
 	health -= amount
 	
+	# Apply knockback
+	apply_knockback_from_hit()
+	
 	# Spawn floating number with adjusted position
 	if alive:  # Ensure the dummy is still alive before accessing global_position
 		var floating_num = FloatingNumber.instantiate() as Label
@@ -152,6 +191,36 @@ func take_damage(amount, is_crit: bool = false):
 	
 	if health <= 0:
 		die()
+
+func apply_knockback_from_hit():
+	# Get player position to determine knockback direction
+	var player = get_tree().get_first_node_in_group("Player")
+	if player:
+		# Calculate knockback direction away from player
+		knockback_direction = (global_position - player.global_position).normalized()
+		
+		# Increase knockback for crits
+		knockback_strength = 150.0  # Base knockback strength
+		
+		# Start knockback
+		knockback_active = true
+		knockback_return_active = false
+		knockback_remaining_time = knockback_max_time
+		print("Dummy knocked back in direction: ", knockback_direction)
+
+# Function to handle knockback from fireballs specifically
+func apply_knockback_from_fireball(fireball_position: Vector2, is_crit: bool = false):
+	# Calculate knockback direction away from fireball
+	knockback_direction = (global_position - fireball_position).normalized()
+	
+	# Increase knockback for crits
+	knockback_strength = 100.0 * (1.5 if is_crit else 1.0)
+	
+	# Start knockback
+	knockback_active = true
+	knockback_return_active = false
+	knockback_remaining_time = knockback_max_time
+	print("Dummy knocked back from fireball in direction: ", knockback_direction)
 
 func die():
 	if not alive:

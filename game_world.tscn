@@ -25,9 +25,6 @@ one_shot = false
 
 [node name="Dummy Manager" parent="." instance=ExtResource("2_e08lw")]
 
-[node name="Dummy" parent="Dummy Manager" index="0"]
-scale = Vector2(0.45, 0.45)
-
 [node name="World Border" parent="." groups=["World"] instance=ExtResource("3_e3xe6")]
 position = Vector2(-403, -212)
 

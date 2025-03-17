@@ -16,7 +16,12 @@ func initialize(player_node: Node):
 	dodge_recovery.timeout.connect(_on_dodge_recovery_timeout)
 	dodge_cooldown.timeout.connect(_on_dodge_cooldown_timeout)
 
-func _physics_process(_delta):
+func _physics_process(delta):
+	# Skip movement if knockback is active
+	if player.knockback_active:
+		return
+
+	# Normal movement code
 	if player:
 		handle_movement()
 

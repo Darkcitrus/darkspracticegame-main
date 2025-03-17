@@ -23,6 +23,14 @@ var alive: bool = true
 var target: Node2D = null  # For compatibility with scripts that might use 'target' directly
 var current_target: Node2D = null  # Add this near the other state variables
 
+# Knockback properties
+var knockback_active = false
+var knockback_direction = Vector2.ZERO
+var knockback_strength = 150.0  # Base knockback strength
+var knockback_recovery_speed = 60.0  # How fast the player recovers from knockback
+var knockback_remaining_time = 0.0
+var knockback_max_time = 0.15  # Knockback duration in seconds
+
 # Movement variables
 var run_speed = 250
 var dodge_speed: int = 1000
@@ -104,7 +112,23 @@ func _ready():
 	target = null
 	current_target = null
 
+# Override the default _physics_process to handle knockback
 func _physics_process(delta):
+	# Handle knockback if active
+	if knockback_active:
+		# Apply knockback force
+		knockback_remaining_time -= delta
+		if knockback_remaining_time <= 0:
+			knockback_active = false
+			velocity = Vector2.ZERO  # Reset velocity after knockback
+			print("Player knockback ended")
+		else:
+			# Apply knockback movement
+			velocity = knockback_direction * knockback_strength
+			move_and_slide()
+			return  # Skip normal movement processing
+	
+	# Normal movement processing if no knockback
 	$PlayerMovement._physics_process(delta)
 	$PlayerAttack._physics_process(delta)
 	$PlayerHealth._physics_process(delta)
@@ -144,3 +168,17 @@ func take_damage(amount: float, is_crit: bool = false):
 		# Start respawn timer
 		if respawn_timer:
 			respawn_timer.start()
+
+# Function to apply knockback from fireballs
+func apply_knockback_from_fireball(fireball_position: Vector2, is_crit: bool = false):
+	# Calculate knockback direction away from fireball
+	knockback_direction = (global_position - fireball_position).normalized()
+	
+	# Modify knockback strength for crits
+	var actual_strength = knockback_strength * (1.5 if is_crit else 1.0)
+	
+	# Start knockback
+	knockback_active = true
+	knockback_remaining_time = knockback_max_time
+	knockback_strength = actual_strength
+	print("Player knocked back from fireball in direction: ", knockback_direction)
