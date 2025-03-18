@@ -2,38 +2,36 @@
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_3bnk7"]
 normal = Vector2(0, 1)
-distance = 326.0
+distance = 2.0
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_fwyp5"]
-distance = 329.0
+distance = 4.0
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_fbsfb"]
 normal = Vector2(1, 0)
-distance = 9.0
+distance = 1.0
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_c8c3x"]
 normal = Vector2(-1, 0)
-distance = 58.0
 
 [node name="World Border" type="StaticBody2D"]
-position = Vector2(173, 108)
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
-position = Vector2(386, -429)
+position = Vector2(0, -960)
 shape = SubResource("WorldBoundaryShape2D_3bnk7")
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="."]
-position = Vector2(386, 855)
+position = Vector2(0, 960)
 shape = SubResource("WorldBoundaryShape2D_fwyp5")
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-170, 214)
+position = Vector2(-1080, 0)
 shape = SubResource("WorldBoundaryShape2D_fbsfb")
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="."]
-position = Vector2(1027, 183)
+position = Vector2(1080, 0)
 shape = SubResource("WorldBoundaryShape2D_c8c3x")
 metadata/_edit_group_ = true

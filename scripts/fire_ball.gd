@@ -183,7 +183,7 @@ func _handle_hit(object):
 		object.take_damage(damage_info["damage"], damage_info["is_crit"])
 		print("FIREBALL: Damage applied: ", damage_info["damage"])
 		
-		# Apply knockback based on object type
+ 		# Apply knockback based on object type
 		if object.has_method("apply_knockback_from_fireball"):
 			object.apply_knockback_from_fireball(global_position, damage_info["is_crit"])
 			print("FIREBALL: Applied knockback to " + object.name)

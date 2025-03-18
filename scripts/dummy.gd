@@ -43,9 +43,12 @@ func _ready():
 	add_to_group("Enemy")  # Add dummy to Enemy group
 	add_to_group("Targetable")  # Add to Targetable group for fireball targeting
 	
-	# Store initial position and oscillation time
+	# Store initial position but don't apply oscillation immediately
 	initial_position = position
 	oscillation_start_time = Time.get_ticks_msec() / 1000.0
+	
+	# Add a short delay before starting oscillation
+	await get_tree().create_timer(0.1).timeout
 	
 	# Set up collisions - REMOVED mouse detection settings
 	monitoring = true
@@ -123,12 +126,17 @@ func _process(delta):
 			# Move towards original position
 			knockback_position_offset += return_direction * return_distance
 	
-	# Calculate oscillation - always maintain this regardless of knockback
-	var time = Time.get_ticks_msec() / 1000.0 - oscillation_start_time
-	var oscillation_offset = Vector2(0, sin(time * frequency * PI * 2) * amplitude)
-	
-	# Apply both oscillation and knockback to position
-	position = initial_position + oscillation_offset + knockback_position_offset
+	# Only apply oscillation if we're past the initial delay
+	if Time.get_ticks_msec() / 1000.0 > oscillation_start_time + 0.1:
+		# Calculate oscillation offset
+		var time_elapsed = Time.get_ticks_msec() / 1000.0 - oscillation_start_time
+		var oscillation_offset = Vector2.UP * amplitude * sin(time_elapsed * frequency * 2 * PI)
+		
+		# Apply to position
+		position = initial_position + oscillation_offset + knockback_position_offset
+	else:
+		# Keep exactly at initial position during the initial delay
+		position = initial_position + knockback_position_offset
 	
 	# Always check for player as potential target
 	if shoots_fireballs and alive:
@@ -241,8 +249,14 @@ func die():
 func reset_position(pos: Vector2):
 	initial_position = pos
 	position = pos
+	# Reset oscillation time to create a small delay
 	oscillation_start_time = Time.get_ticks_msec() / 1000.0
 	print("Dummy reset to position: ", pos)
+	
+	# Explicitly cancel any ongoing oscillation
+	knockback_position_offset = Vector2.ZERO
+	knockback_active = false
+	knockback_return_active = false
 
 func shoot_fireball():
 	if !alive or !shoots_fireballs:
