@@ -14,7 +14,6 @@ script = ExtResource("1_4nlp4")
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="Background" type="Sprite2D" parent="." groups=["World"]]
-visible = false
 show_behind_parent = true
 light_mask = 9
 visibility_layer = 15
@@ -24,7 +23,6 @@ scale = Vector2(1.49297, 1.49583)
 texture = ExtResource("9_led6v")
 
 [node name="Menu" type="Node2D" parent="." groups=["UI"]]
-visible = false
 script = ExtResource("2_pkncg")
 
 [node name="MenuBG" type="Sprite2D" parent="Menu"]
@@ -60,37 +58,13 @@ script = ExtResource("5_ob1lq")
 
 [node name="GameWorld" parent="." instance=ExtResource("7_88wd7")]
 
-[node name="Player" parent="GameWorld" index="0"]
-position = Vector2(-372, 0)
+[node name="Player" parent="GameWorld" index="1"]
+scale = Vector2(0.31, 0.31)
 
-[node name="PlayerMovement" parent="GameWorld/Player" index="0"]
-visible = false
-
-[node name="PlayerAttack" parent="GameWorld/Player" index="1"]
-visible = false
-
-[node name="PlayerHealth" parent="GameWorld/Player" index="2"]
-visible = false
-
-[node name="PlayerCollision" parent="GameWorld/Player" index="4"]
-visible = false
-
-[node name="Projectiles" parent="GameWorld/Player" index="5"]
-visible = false
-
-[node name="DashCount" parent="GameWorld/Player" index="6"]
-visible = false
-
-[node name="HealthBar" parent="GameWorld/Player" index="7"]
-visible = false
-
-[node name="Dummy Manager" parent="GameWorld" index="1"]
+[node name="Dummy Manager" parent="GameWorld" index="2"]
 scale = Vector2(0.45, 0.45)
 
 [node name="Dummy" parent="GameWorld/Dummy Manager" index="0"]
-visible = false
-
-[node name="World Border" parent="GameWorld" index="2"]
 visible = false
 
 [node name="CollisionShape2D2" parent="GameWorld/World Border" index="0"]
@@ -104,9 +78,6 @@ position = Vector2(-955, 0)
 
 [node name="CollisionShape2D4" parent="GameWorld/World Border" index="3"]
 position = Vector2(956, 0)
-
-[node name="Camera2D" parent="GameWorld" index="3"]
-visible = false
 
 [editable path="GameWorld"]
 [editable path="GameWorld/Player"]

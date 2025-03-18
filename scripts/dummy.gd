@@ -40,6 +40,19 @@ var fireball_scene = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# DEBUGGING CODE - Print position information
+	print("========== DUMMY POSITION DEBUG ==========")
+	print("Dummy name:", name)
+	print("Initial position:", position)
+	print("Initial global position:", global_position)
+	var parent = get_parent()
+	print("Parent:", parent.name if parent != null else "none") 
+	print("Viewport size:", get_viewport_rect().size)
+	print("Scale:", scale)
+	print("========================================")
+	
+	# Schedule position check after a delay
+	get_tree().create_timer(1.0).timeout.connect(print_delayed_position)
 	add_to_group("Enemy")  # Add dummy to Enemy group
 	add_to_group("Targetable")  # Add to Targetable group for fireball targeting
 	
@@ -95,9 +108,9 @@ func _ready():
 		print("Fireball timer initialized with frequency: ", fireball_frequency)
 	
 	# Find spawner/manager parent to record original scale
-	var parent = get_parent()
-	if parent and parent.has_method("record_original_dummy_scale"):
-		parent.record_original_dummy_scale(self)
+	var spawner_parent = get_parent()
+	if spawner_parent and spawner_parent.has_method("record_original_dummy_scale"):
+		spawner_parent.record_original_dummy_scale(self)
 		print("Dummy: Registered original scale with parent: ", scale)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -285,3 +298,13 @@ func shoot_fireball():
 		print("Fireball fired with damage: ", fireball_damage, " speed: ", adjusted_speed, " homing: ", adjusted_homing)
 	else:
 		print("Cannot shoot fireball: player exists=", is_instance_valid(player), ", player alive=", player and player.alive, ", fireball_scene exists=", fireball_scene != null)
+
+func print_delayed_position():
+	print("========== DUMMY DELAYED POSITION CHECK ==========")
+	print("Dummy name:", name)
+	print("Current position:", position)
+	print("Current global position:", global_position)
+	print("Initial position stored:", initial_position)
+	print("Oscillation offset:", Vector2.UP * amplitude * sin((Time.get_ticks_msec() / 1000.0 - oscillation_start_time) * frequency * 2 * PI))
+	print("Knockback offset:", knockback_position_offset)
+	print("==========================================")

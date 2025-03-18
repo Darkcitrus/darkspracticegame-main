@@ -5,6 +5,11 @@ var spawn_position: Vector2
 var original_scale: Vector2 = Vector2(0.5, 0.5) # Store the original scale
 
 func _ready():
+	# Force our position to 0,0 to ensure proper coordinates
+	position = Vector2.ZERO
+	print("DummyManager: Forced position to origin (0,0)")
+	print("DummyManager: Global position is:", global_position)
+	
 	if get_child_count() > 0:
 		var first_dummy = get_child(0)
 		# Store the original dummy's position and scale without any offset
@@ -19,6 +24,7 @@ func _ready():
 		# Ensure dummy is exactly at its position without oscillation on start
 		first_dummy.position = spawn_position
 		print("DummyManager: Connected to first dummy at position ", spawn_position)
+		print("DummyManager: First dummy global position is:", first_dummy.global_position)
 
 func _on_dummy_died(pos: Vector2):
 	print("DummyManager: Dummy died at position ", pos, ", respawning in 1 second...")
