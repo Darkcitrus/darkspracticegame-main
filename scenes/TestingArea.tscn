@@ -23,6 +23,7 @@ scale = Vector2(1.49297, 1.49583)
 texture = ExtResource("9_led6v")
 
 [node name="Menu" type="Node2D" parent="." groups=["UI"]]
+visible = false
 script = ExtResource("2_pkncg")
 
 [node name="MenuBG" type="Sprite2D" parent="Menu"]
@@ -59,13 +60,14 @@ script = ExtResource("5_ob1lq")
 [node name="GameWorld" parent="." instance=ExtResource("7_88wd7")]
 
 [node name="Player" parent="GameWorld" index="1"]
+position = Vector2(-344.202, -1.81757)
 scale = Vector2(0.31, 0.31)
 
 [node name="Dummy Manager" parent="GameWorld" index="2"]
 scale = Vector2(0.45, 0.45)
 
 [node name="Dummy" parent="GameWorld/Dummy Manager" index="0"]
-visible = false
+position = Vector2(6.22416, -3.61464)
 
 [node name="CollisionShape2D2" parent="GameWorld/World Border" index="0"]
 position = Vector2(0, -538)

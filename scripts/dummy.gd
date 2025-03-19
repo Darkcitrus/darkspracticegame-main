@@ -76,22 +76,16 @@ func _ready():
 		healthbar.max_value = max_health
 		healthbar.value = health
 		healthbar.show()
-		print("Dummy healthbar initialized. Max health: ", max_health)
 	
 	# Ensure selector is properly set up
 	if selector:
 		selector.visible = false  # Hide selector initially
-		print("Selector initialized and hidden")
-	else:
-		print("Selector node not found!")
-		
+	
 	# Load fireball scene with error checking
 	if ResourceLoader.exists("res://scenes/fire_ball.tscn"):
 		fireball_scene = load("res://scenes/fire_ball.tscn")
-		print("Fireball scene loaded successfully")
 	else:
 		push_error("Could not load fireball scene!")
-		print("ERROR: Failed to load fireball scene")
 		shoots_fireballs = false
 	
 	# Set up fireball timer
@@ -105,13 +99,11 @@ func _ready():
 		if not fireball_timer.timeout.is_connected(shoot_fireball):
 			fireball_timer.timeout.connect(shoot_fireball)
 		fireball_timer.start()  # Start the timer explicitly
-		print("Fireball timer initialized with frequency: ", fireball_frequency)
 	
 	# Find spawner/manager parent to record original scale
 	var spawner_parent = get_parent()
 	if spawner_parent and spawner_parent.has_method("record_original_dummy_scale"):
 		spawner_parent.record_original_dummy_scale(self)
-		print("Dummy: Registered original scale with parent: ", scale)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -155,7 +147,7 @@ func _process(delta):
 	if shoots_fireballs and alive:
 		var player = get_tree().get_first_node_in_group("Player")
 		if player and player.alive:
-			# For debugging: periodically check if we can see the player
+				# For debugging: periodically check if we can see the player
 			if Engine.get_frames_drawn() % 60 == 0:  # Check roughly once per second
 				print("Dummy tracking player at position: ", player.global_position)
 
@@ -166,7 +158,6 @@ func _on_area_entered(area: Area2D) -> void:
 	var parent_name = ""
 	if area.get_parent():
 		parent_name = area.get_parent().name
-	print("Dummy detected hit from: ", area.name, " Parent: ", parent_name)
 	
 	# Updated condition: check directly for "hitbox" OR "sword"
 	if area.name == "hitbox" or area.name == "sword":
@@ -174,23 +165,17 @@ func _on_area_entered(area: Area2D) -> void:
 		if player:
 			var damage_info = player.get_node("PlayerAttack").calculate_damage()
 			take_damage(damage_info["damage"], damage_info["is_crit"])
-			print("Took melee damage: ", damage_info["damage"], " Critical: ", damage_info["is_crit"])
 	# Check for fireball damage and make sure it's not from self
 	elif area.has_method("calculate_damage"):
 		# Make sure this fireball wasn't fired by this dummy
 		if area.has_method("get_source") and area.get_source() != self:
 			var damage_info = area.calculate_damage()
 			take_damage(damage_info["damage"], damage_info["is_crit"])
-			print("Took effect damage: ", damage_info["damage"], " Critical: ", damage_info["is_crit"])
-		else:
-			print("Dummy ignoring its own projectile")
 
 func take_damage(amount, is_crit: bool = false):
 	if not alive:
-		print("Dummy is already dead, ignoring damage")
 		return
 		
-	print("DUMMY DAMAGE - Amount: ", amount, " Is Crit: ", is_crit)
 	health -= amount
 	
 	# Apply knockback
@@ -201,13 +186,9 @@ func take_damage(amount, is_crit: bool = false):
 		var floating_num = FloatingNumber.instantiate() as Label
 		if floating_num:
 			get_tree().get_root().add_child(floating_num)
-			print("Spawning damage number: ", amount, " Crit: ", is_crit)
 			floating_num.setup(amount, is_crit, global_position)
 	
-	print("Dummy health now: ", health)
-	
 	if healthbar:
-		print("Updating dummy healthbar to: ", health)
 		healthbar.value = health
 	
 	if health <= 0:
@@ -227,7 +208,6 @@ func apply_knockback_from_hit():
 		knockback_active = true
 		knockback_return_active = false
 		knockback_remaining_time = knockback_max_time
-		print("Dummy knocked back in direction: ", knockback_direction)
 
 # Function to handle knockback from fireballs specifically
 func apply_knockback_from_fireball(fireball_position: Vector2, is_crit: bool = false):
@@ -241,7 +221,6 @@ func apply_knockback_from_fireball(fireball_position: Vector2, is_crit: bool = f
 	knockback_active = true
 	knockback_return_active = false
 	knockback_remaining_time = knockback_max_time
-	print("Dummy knocked back from fireball in direction: ", knockback_direction)
 
 func die():
 	if not alive:
@@ -260,8 +239,15 @@ func die():
 
 # Ensure initial position is reset correctly on respawn
 func reset_position(pos: Vector2):
-	initial_position = pos
-	position = pos
+	# Reset initial position and account for parent's scale
+	var parent_scale = get_parent().scale
+	initial_position = Vector2(
+		(pos.x - get_parent().position.x) / parent_scale.x,
+		(pos.y - get_parent().position.y) / parent_scale.y
+	)
+	position = initial_position
+	knockback_position_offset = Vector2.ZERO
+	print("Dummy reset to position:", pos, "with scale:", scale)
 	# Reset oscillation time to create a small delay
 	oscillation_start_time = Time.get_ticks_msec() / 1000.0
 	print("Dummy reset to position: ", pos)
@@ -273,14 +259,11 @@ func reset_position(pos: Vector2):
 
 func shoot_fireball():
 	if !alive or !shoots_fireballs:
-		print("Skipping fireball: alive=", alive, ", shoots_fireballs=", shoots_fireballs)
 		return
 		
-	print("Attempting to shoot fireball")
 	var player = get_tree().get_first_node_in_group("Player")
 	# Only shoot if player exists and is alive
 	if player and player.alive and fireball_scene:
-		print("Dummy shooting fireball at player")
 		var fireball = fireball_scene.instantiate()
 		get_tree().get_root().add_child(fireball)
 		fireball.global_position = global_position
@@ -295,9 +278,6 @@ func shoot_fireball():
 		
 		# Initialize with custom properties, disable crits, and set self as source
 		fireball.initialize(direction, player, fireball_damage, adjusted_speed, adjusted_homing, false, self)
-		print("Fireball fired with damage: ", fireball_damage, " speed: ", adjusted_speed, " homing: ", adjusted_homing)
-	else:
-		print("Cannot shoot fireball: player exists=", is_instance_valid(player), ", player alive=", player and player.alive, ", fireball_scene exists=", fireball_scene != null)
 
 func print_delayed_position():
 	print("========== DUMMY DELAYED POSITION CHECK ==========")

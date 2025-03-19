@@ -1,5 +1,9 @@
 extends Node
 
+# Variables for player positioning
+var center_position = Vector2.ZERO
+var player_offset = Vector2(100, 0)  # Example offset, adjust as needed
+
 func _ready():
 	# Force camera settings immediately and after a short delay
 	call_deferred("force_camera_settings")
@@ -43,6 +47,8 @@ func force_camera_settings():
 
 func debug_player_initial():
 	var player = get_parent()
+	player.position = center_position + player_offset
+	print("Player initial position set to:", player.position)
 	print("========== PLAYER INITIAL DEBUG ==========")
 	print("Player name:", player.name)
 	print("Initial position:", player.position)

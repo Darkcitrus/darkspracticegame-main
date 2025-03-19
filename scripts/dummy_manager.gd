@@ -5,19 +5,23 @@ var spawn_position: Vector2
 var original_scale: Vector2 = Vector2(0.5, 0.5) # Store the original scale
 
 func _ready():
-	# Force our position to 0,0 to ensure proper coordinates
-	position = Vector2.ZERO
-	print("DummyManager: Forced position to origin (0,0)")
+	# Force our position to the center of the viewport
+	var viewport_center = get_viewport().get_visible_rect().size / 2
+	position = viewport_center
+	print("DummyManager: Forced position to viewport center:", position)
 	print("DummyManager: Global position is:", global_position)
-	
+
 	if get_child_count() > 0:
 		var first_dummy = get_child(0)
-		# Store the original dummy's position and scale without any offset
-		spawn_position = first_dummy.position
+		# Adjust spawn position to account for DummyManager's position and scale
+		spawn_position = Vector2(
+			(first_dummy.position.x * scale.x) + position.x,
+			(first_dummy.position.y * scale.y) + position.y
+		)
 		original_scale = first_dummy.scale
 		print("DummyManager: Original dummy scale is ", original_scale)
-		print("DummyManager: Original dummy position is ", spawn_position)
-		
+		print("DummyManager: Adjusted dummy spawn position is ", spawn_position)
+
 		connect_dummy(first_dummy)
 		# Reset position explicitly to avoid oscillation offset on start
 		first_dummy.reset_position(spawn_position)
@@ -34,11 +38,11 @@ func _on_dummy_died(pos: Vector2):
 func spawn_new_dummy(pos: Vector2):
 	var new_dummy = dummy_scene.instantiate()
 	add_child(new_dummy)
-	
+
 	# Set scale to match the original dummy
 	new_dummy.scale = original_scale
 	print("DummyManager: Setting new dummy scale to ", original_scale)
-	
+
 	# Position must be set before calling reset_position
 	new_dummy.position = pos
 	connect_dummy(new_dummy)
