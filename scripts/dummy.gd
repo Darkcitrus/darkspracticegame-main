@@ -104,6 +104,12 @@ func _ready():
 	var spawner_parent = get_parent()
 	if spawner_parent and spawner_parent.has_method("record_original_dummy_scale"):
 		spawner_parent.record_original_dummy_scale(self)
+	
+	# Print more details about node hierarchy
+	print("Dummy full path:", get_path())
+	if parent:
+		print("Parent full path:", parent.get_path())
+		print("Parent global position:", parent.global_position)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -238,22 +244,21 @@ func die():
 	queue_free()
 
 # Ensure initial position is reset correctly on respawn
-func reset_position(pos: Vector2):
-	# Reset initial position and account for parent's scale
-	var parent_scale = get_parent().scale
-	initial_position = Vector2(
-		(pos.x - get_parent().position.x) / parent_scale.x,
-		(pos.y - get_parent().position.y) / parent_scale.y
-	)
-	position = initial_position
-	knockback_position_offset = Vector2.ZERO
-	print("Dummy reset to position:", pos, "with scale:", scale)
-	# Reset oscillation time to create a small delay
-	oscillation_start_time = Time.get_ticks_msec() / 1000.0
-	print("Dummy reset to position: ", pos)
+func reset_position(pos = null):
+	if pos:
+		global_position = pos
 	
-	# Explicitly cancel any ongoing oscillation
+	# Store the current position for oscillation
+	initial_position = position
 	knockback_position_offset = Vector2.ZERO
+	
+	print("Dummy reset - Position:", position)
+	print("Dummy reset - Global position:", global_position)
+	
+	# Reset oscillation time
+	oscillation_start_time = Time.get_ticks_msec() / 1000.0
+	
+	# Cancel any active effects
 	knockback_active = false
 	knockback_return_active = false
 

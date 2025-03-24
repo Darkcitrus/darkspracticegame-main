@@ -18,7 +18,7 @@ radius = 11.2994
 height = 96.0452
 
 [node name="Player" type="CharacterBody2D" groups=["Player"]]
-scale = Vector2(0.365, 0.365)
+scale = Vector2(0.455, 0.455)
 input_pickable = true
 motion_mode = 1
 script = ExtResource("1_xyfxo")
@@ -76,6 +76,7 @@ rounded = true
 texture_under = ExtResource("3_lu8wt")
 texture_progress = ExtResource("4_x10p8")
 script = ExtResource("5_gpk5f")
+metadata/_edit_use_anchors_ = true
 
 [node name="DodgeTimer" type="Timer" parent="."]
 wait_time = 0.1

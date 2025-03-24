@@ -15,6 +15,7 @@ size = Vector2(87.5704, 81.9209)
 radius = 150.0
 
 [node name="Dummy" type="Area2D" groups=["Enemy", "Targetable"]]
+scale = Vector2(0.455, 0.455)
 collision_layer = 2
 script = ExtResource("1_53g3u")
 amplitude = 100.0

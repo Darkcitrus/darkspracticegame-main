@@ -2,14 +2,17 @@
 
 [ext_resource type="Script" uid="uid://yf6ip70kb60n" path="res://scripts/Node2D.gd" id="1_4nlp4"]
 [ext_resource type="Script" uid="uid://pkj5eo41uddn" path="res://scripts/menu.gd" id="2_pkncg"]
+[ext_resource type="Script" uid="uid://qnvv54s7674" path="res://scripts/debug/DebugLogger.gd" id="2_uxidc"]
 [ext_resource type="Texture2D" uid="uid://cvmt1qtpxdcn5" path="res://assets/Menu.png" id="3_e11ah"]
 [ext_resource type="Script" uid="uid://cho8b0ngsq6qc" path="res://scripts/quit_button.gd" id="4_4yquy"]
 [ext_resource type="Script" uid="uid://fgfi3hsmbhm0" path="res://scripts/play_button.gd" id="5_ob1lq"]
-[ext_resource type="PackedScene" uid="uid://dn4hf7rryawqk" path="res://game_world.tscn" id="7_88wd7"]
 [ext_resource type="Texture2D" uid="uid://dqcxilmlb3ogf" path="res://assets/img/bg.png" id="9_led6v"]
 
 [node name="Testing Area" type="Node2D" groups=["UI"]]
 script = ExtResource("1_4nlp4")
+
+[node name="DebugLogger" type="Node2D" parent="."]
+script = ExtResource("2_uxidc")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
@@ -23,7 +26,6 @@ scale = Vector2(1.49297, 1.49583)
 texture = ExtResource("9_led6v")
 
 [node name="Menu" type="Node2D" parent="." groups=["UI"]]
-visible = false
 script = ExtResource("2_pkncg")
 
 [node name="MenuBG" type="Sprite2D" parent="Menu"]
@@ -56,34 +58,3 @@ offset_bottom = 181.0
 grow_horizontal = 2
 text = "Play :)"
 script = ExtResource("5_ob1lq")
-
-[node name="GameWorld" parent="." instance=ExtResource("7_88wd7")]
-
-[node name="Player" parent="GameWorld" index="1"]
-position = Vector2(-344.202, -1.81757)
-scale = Vector2(0.31, 0.31)
-
-[node name="Dummy Manager" parent="GameWorld" index="2"]
-scale = Vector2(0.45, 0.45)
-
-[node name="Dummy" parent="GameWorld/Dummy Manager" index="0"]
-position = Vector2(6.22416, -3.61464)
-
-[node name="CollisionShape2D2" parent="GameWorld/World Border" index="0"]
-position = Vector2(0, -538)
-
-[node name="CollisionShape2D3" parent="GameWorld/World Border" index="1"]
-position = Vector2(0, 539)
-
-[node name="CollisionShape2D" parent="GameWorld/World Border" index="2"]
-position = Vector2(-955, 0)
-
-[node name="CollisionShape2D4" parent="GameWorld/World Border" index="3"]
-position = Vector2(956, 0)
-
-[editable path="GameWorld"]
-[editable path="GameWorld/Player"]
-[editable path="GameWorld/Dummy Manager"]
-[editable path="GameWorld/Dummy Manager/Dummy"]
-[editable path="GameWorld/Dummy Manager/Dummy/Selector"]
-[editable path="GameWorld/World Border"]

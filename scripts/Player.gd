@@ -112,6 +112,21 @@ func _ready():
 	target = null
 	current_target = null
 
+	# Ensure the player's position is not reset
+	print("Player initial position:", global_position)
+
+	# Log the player's position after initialization
+	print("Player initial position after GameManager positioning:", global_position)
+
+	# Add a deferred call to verify the position after all initialization
+	call_deferred("_verify_position")
+
+	print("Player: _ready called. Initial position:", global_position)
+
+func _verify_position():
+	print("Player position verified after deferred call:", global_position)
+	print("Player: Position verified after deferred call:", global_position)
+
 # Override the default _physics_process to handle knockback
 func _physics_process(delta):
 	# Handle knockback if active
@@ -133,6 +148,8 @@ func _physics_process(delta):
 	$PlayerAttack._physics_process(delta)
 	$PlayerHealth._physics_process(delta)
 	move_and_slide()
+
+	print("Player: _physics_process called. Current position:", global_position)
 
 func _on_respawn_timer_timeout():
 	$PlayerHealth._on_respawn_timer_timeout()
