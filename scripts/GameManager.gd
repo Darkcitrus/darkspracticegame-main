@@ -23,12 +23,9 @@ func _ready():
 		logger.name = "DebugLogger"
 		get_tree().root.call_deferred("add_child", logger)
 	
-	# Call deferred to ensure the scene is fully loaded
+	# Defer the call to _position_entities to ensure all nodes are ready
 	call_deferred("_position_entities")
-	get_tree().create_timer(0.1).timeout.connect(_position_entities)  # Reapply position after a short delay
-	get_tree().create_timer(0.5).timeout.connect(_position_entities)  # Final reapply to ensure correctness
-	
-	print("GameManager: _ready called. Initializing center position and entities.")
+	print("GameManager: _ready called. Initialization deferred until all nodes are ready.")
 
 func _update_center_position():
 	# Calculate the center of the viewport
@@ -40,8 +37,9 @@ func _update_center_position():
 
 func _position_entities():
 	print("GameManager: _position_entities called. Repositioning entities.")
-	# Position the dummy at center
-	var dummy_manager = get_node_or_null("/root/GameWorld/Dummy Manager")
+
+	# Check for Dummy Manager
+	var dummy_manager = get_node_or_null("Dummy Manager")
 	if dummy_manager:
 		print("GameManager: Found Dummy Manager.")
 		var dummy = _find_first_dummy(dummy_manager)
@@ -53,20 +51,25 @@ func _position_entities():
 	else:
 		print("GameManager: Dummy Manager not found.")
 
-	# Position the player left of center
-	var player = get_node_or_null("/root/GameWorld/Player")
+	# Check for Player
+	var player = get_node_or_null("Player")
 	if player:
 		print("GameManager: Found Player node. Positioning player.")
 		player.scale = Vector2(1, 1)  # Reset scale to avoid affecting position
+		
+		# Explicitly set the player's spawn position to the center of the viewport
 		var target_pos = center_position + player_offset
 		player.global_position = target_pos
 		print("GameManager: Player positioned at:", target_pos, "with scale reset to:", player.scale)
 		print("GameManager: Player global position after positioning:", player.global_position)
+		
+		# Add a deferred call to verify the player's position
+		call_deferred("_verify_player_position", player)
 	else:
 		print("GameManager: Player node not found.")
 
-	# Ensure camera is properly positioned
-	var camera = get_node_or_null("/root/GameWorld/Camera2D")
+	# Check for Camera2D
+	var camera = get_node_or_null("Camera2D")
 	if camera:
 		print("GameManager: Found Camera2D node. Positioning camera.")
 		camera.global_position = center_position
@@ -79,10 +82,16 @@ func _position_entities():
 
 func position_dummy(dummy):
 	if dummy:
-		# Use global_position for accurate placement
-		dummy.global_position = center_position
-		print("Positioned dummy at global center:", center_position)
-		print("Dummy global position after setting:", dummy.global_position)
+		# Ensure the Dummy Manager is positioned at the center of the viewport
+		var dummy_manager = dummy.get_parent()
+		if dummy_manager:
+			dummy_manager.global_position = center_position
+			print("GameManager: Positioned Dummy Manager at center:", center_position)
+
+		# Position the dummy relative to the Dummy Manager
+		dummy.position = Vector2.ZERO  # Reset local position to align with Dummy Manager
+		print("GameManager: Positioned dummy relative to Dummy Manager at:", dummy.position)
+		print("GameManager: Dummy global position after setting:", dummy.global_position)
 
 func position_player(player):
 	if player:
@@ -148,6 +157,7 @@ func _get_node_path_to_root(node):
 
 func _verify_player_position(player):
 	if player:
+		print("GameManager: Verifying player position after deferred call. Current position:", player.global_position)
 		var viewport_center = get_viewport().get_visible_rect().size / 2
 		var expected_pos = viewport_center + player_offset
 		

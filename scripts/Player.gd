@@ -115,6 +115,9 @@ func _ready():
 	# Ensure the player's position is not reset
 	print("Player initial position:", global_position)
 
+	# Log the player's initial position
+	print("Player: Initial position in _ready:", global_position)
+
 	# Log the player's position after initialization
 	print("Player initial position after GameManager positioning:", global_position)
 
@@ -129,6 +132,10 @@ func _verify_position():
 
 # Override the default _physics_process to handle knockback
 func _physics_process(delta):
+	# Log the player's position during physics processing
+	print("Player: _physics_process called. Current position:", global_position)
+
+	# Ensure no logic modifies the player's position here
 	# Handle knockback if active
 	if knockback_active:
 		# Apply knockback force

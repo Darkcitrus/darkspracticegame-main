@@ -37,55 +37,13 @@ func _ready():
 func track_player_position():
 	var player = get_parent()
 	if player:
-		# Calculate expected position relative to dummy
-		var dummy = get_tree().get_first_node_in_group("Enemy")
-		if dummy:
-			expected_position = dummy.global_position + Vector2(-250, 0)
-		else:
-			expected_position = get_viewport().get_visible_rect().size / 2 + Vector2(-250, 0)
-		
-		# Add current position to history, keep last 10 positions
-		position_history.push_front(player.global_position)
-		if position_history.size() > 10:
-			position_history.pop_back()
-		
-		# Calculate distance from expected position
-		var distance = (player.global_position - expected_position).length()
-		var viewport_size = get_viewport().get_visible_rect().size
-		
-		# Log detailed position info
-		print("POSITION TRACKER: Frame " + str(Engine.get_frames_drawn()))
-		print("  Current global: " + str(player.global_position))
-		print("  Expected: " + str(expected_position))
-		print("  Distance from expected: " + str(distance) + " px")
-		print("  Viewport percent: " + str(100 * distance / viewport_size.length()) + "%")
-		
-		# Check for parent scale/position that might affect
-		var parent = player.get_parent()
-		if parent:
-			print("  Parent global_position: " + str(parent.global_position))
-			print("  Parent scale: " + str(parent.scale))
-		
-		# Check for global transform changes
-		print("  Global transform origin: " + str(player.global_transform.origin))
-		
-		# Display a clear visual warning if significantly off position
-		if distance > 5.0:
-			print("*** WARNING: Player position off by " + str(distance) + " pixels! ***")
-			print("Player position will not be corrected by player_debug.gd.")
-		
-		# Log the player's scale for debugging
-		print("Player scale during tracking:", player.scale)
-		
 		# Log the player's position for debugging
-		print("Player position during tracking:", player.global_position)
-		print("Expected position during tracking:", expected_position)
-		
-		# Ensure this script does not modify the player's position
-		print("Player position tracking only, no corrections applied.")
 		print("PlayerDebug: Tracking player position. Current global position:", player.global_position)
 		print("PlayerDebug: Expected position:", expected_position)
-		print("PlayerDebug: Distance from expected position:", distance)
+		print("PlayerDebug: Distance from expected position:", (player.global_position - expected_position).length())
+
+		# Ensure this script does not modify the player's position
+		print("PlayerDebug: Position tracking only, no corrections applied.")
 
 func enforce_camera_and_positions():
 	# Enforce camera settings

@@ -1,24 +1,17 @@
-[gd_scene load_steps=7 format=3 uid="uid://dn4hf7rryawqk"]
+[gd_scene load_steps=5 format=3 uid="uid://dn4hf7rryawqk"]
 
 [ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="1_ea1x0"]
 [ext_resource type="Script" uid="uid://cy1fm8fm0sxwu" path="res://scripts/camera_enforcer.gd" id="2_b7eqr"]
 [ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_e08lw"]
-[ext_resource type="PackedScene" uid="uid://bmoasy0v3are7" path="res://game_manager.tscn" id="2_mcbma"]
-[ext_resource type="PackedScene" uid="uid://o888u5fliew8" path="res://scenes/world_border.tscn" id="3_e3xe6"]
 [ext_resource type="Script" uid="uid://cbs4j5p05xi2p" path="res://scripts/player_debug.gd" id="4_dw3vo"]
 
 [node name="GameWorld" type="Node2D"]
 script = ExtResource("2_b7eqr")
 
-[node name="GameManager" parent="." instance=ExtResource("2_mcbma")]
-
-[node name="Camera2D" type="Camera2D" parent="." groups=["UI"]]
-process_callback = 0
-editor_draw_limits = true
-
 [node name="Player" parent="." instance=ExtResource("1_ea1x0")]
 texture_filter = 5
-scale = Vector2(1, 1)
+position = Vector2(334, 359)
+scale = Vector2(0.45, 0.45)
 
 [node name="DodgeRecovery" parent="Player" index="9"]
 one_shot = false
@@ -27,25 +20,8 @@ one_shot = false
 script = ExtResource("4_dw3vo")
 
 [node name="Dummy Manager" parent="." instance=ExtResource("2_e08lw")]
-visible = false
-
-[node name="World Border" parent="." groups=["World"] instance=ExtResource("3_e3xe6")]
-visible = false
-
-[node name="CollisionShape2D2" parent="World Border" index="0"]
-position = Vector2(0, -542)
-
-[node name="CollisionShape2D3" parent="World Border" index="1"]
-position = Vector2(0, 542)
-
-[node name="CollisionShape2D" parent="World Border" index="2"]
-position = Vector2(-960, 0)
-
-[node name="CollisionShape2D4" parent="World Border" index="3"]
-position = Vector2(959, 0)
 
 [editable path="Player"]
 [editable path="Dummy Manager"]
 [editable path="Dummy Manager/Dummy"]
 [editable path="Dummy Manager/Dummy/Selector"]
-[editable path="World Border"]

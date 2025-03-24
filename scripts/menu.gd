@@ -21,15 +21,16 @@ func respawn_game_world():
 	game_world.hide()
 	print("Menu: New game world instantiated and hidden.")
 
-	# Ensure the GameManager is properly instantiated
+	# Ensure the GameManager is properly initialized
 	var game_manager = game_world.get_node_or_null("GameManager")
 	if not game_manager:
+		print("Menu: GameManager not found in GameWorld. Adding GameManager.")
 		var game_manager_scene = load("res://game_manager.tscn")
 		game_manager = game_manager_scene.instantiate()
 		game_world.add_child(game_manager)
 		print("Menu: GameManager instantiated and added to GameWorld.")
 
-	# Reposition entities after ensuring GameManager exists
+	# Call _position_entities after ensuring GameManager is fully initialized
 	if game_manager:
 		print("Menu: Found GameManager. Repositioning entities.")
 		game_manager.call_deferred("_position_entities")
