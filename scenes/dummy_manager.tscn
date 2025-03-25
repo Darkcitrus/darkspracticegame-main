@@ -8,11 +8,5 @@ script = ExtResource("1_yb1pn")
 
 [node name="Dummy" parent="." instance=ExtResource("2_4qj6t")]
 
-[node name="MouseDetector" parent="Dummy" index="4"]
-visible = false
-
-[node name="Selector" parent="Dummy" index="5"]
-visible = false
-
 [editable path="Dummy"]
 [editable path="Dummy/Selector"]

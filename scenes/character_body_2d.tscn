@@ -53,10 +53,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -25.4238
-offset_top = -290.96
-offset_right = -9.42374
-offset_bottom = -264.96
+offset_left = -41.0
+offset_top = -201.0
+offset_right = -24.9999
+offset_bottom = -175.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(5, 5)
@@ -67,16 +67,22 @@ uppercase = true
 script = ExtResource("6_ns87m")
 
 [node name="HealthBar" type="TextureProgressBar" parent="." groups=["UI"]]
-offset_left = -98.8701
-offset_top = 67.7966
-offset_right = 101.13
-offset_bottom = 117.797
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -98.0
+offset_top = 80.0
+offset_right = 102.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
 value = 100.0
 rounded = true
 texture_under = ExtResource("3_lu8wt")
 texture_progress = ExtResource("4_x10p8")
 script = ExtResource("5_gpk5f")
-metadata/_edit_use_anchors_ = true
 
 [node name="DodgeTimer" type="Timer" parent="."]
 wait_time = 0.1

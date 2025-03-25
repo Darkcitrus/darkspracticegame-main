@@ -37,6 +37,9 @@ func respawn_game_world():
 	else:
 		print("Menu: GameManager still not found after instantiation.")
 
+	# Do not modify the dummy's position here
+	print("Menu: Dummy position is managed by the oscillation script.")
+
 func toggle_menu():
 	if visible:
 		if !game_world:

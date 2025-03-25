@@ -1,27 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://dn4hf7rryawqk"]
+[gd_scene load_steps=4 format=3 uid="uid://dn4hf7rryawqk"]
 
 [ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="1_ea1x0"]
-[ext_resource type="Script" uid="uid://cy1fm8fm0sxwu" path="res://scripts/camera_enforcer.gd" id="2_b7eqr"]
 [ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_e08lw"]
 [ext_resource type="Script" uid="uid://cbs4j5p05xi2p" path="res://scripts/player_debug.gd" id="4_dw3vo"]
 
 [node name="GameWorld" type="Node2D"]
-script = ExtResource("2_b7eqr")
 
 [node name="Player" parent="." instance=ExtResource("1_ea1x0")]
 texture_filter = 5
 position = Vector2(334, 359)
 scale = Vector2(0.45, 0.45)
 
-[node name="DodgeRecovery" parent="Player" index="9"]
-one_shot = false
-
 [node name="PlayerDebug" type="Node" parent="Player"]
 script = ExtResource("4_dw3vo")
 
 [node name="Dummy Manager" parent="." instance=ExtResource("2_e08lw")]
-
-[editable path="Player"]
-[editable path="Dummy Manager"]
-[editable path="Dummy Manager/Dummy"]
-[editable path="Dummy Manager/Dummy/Selector"]
+position = Vector2(655, 359)

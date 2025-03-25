@@ -11,6 +11,10 @@
 [node name="Testing Area" type="Node2D" groups=["UI"]]
 script = ExtResource("1_4nlp4")
 
+[node name="Camera2D" type="Camera2D" parent="."]
+z_index = 4
+position = Vector2(673, 359)
+
 [node name="DebugLogger" type="Node2D" parent="."]
 position = Vector2(673, 359)
 script = ExtResource("2_uxidc")
@@ -22,7 +26,6 @@ visibility_layer = 15
 z_index = -10
 texture_filter = 1
 position = Vector2(673, 359)
-scale = Vector2(1.49297, 1.49583)
 texture = ExtResource("9_led6v")
 
 [node name="Menu" type="Node2D" parent="." groups=["UI"]]
@@ -32,8 +35,7 @@ script = ExtResource("2_pkncg")
 [node name="MenuBG" type="Sprite2D" parent="Menu"]
 z_index = 2
 texture_filter = 1
-position = Vector2(0.499207, -0.49884)
-scale = Vector2(1.911, 2.154)
+scale = Vector2(1.44, 1.44)
 texture = ExtResource("3_e11ah")
 
 [node name="QuitButton" type="Button" parent="Menu"]

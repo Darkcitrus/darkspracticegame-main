@@ -68,14 +68,8 @@ func _position_entities():
 	else:
 		print("GameManager: Player node not found.")
 
-	# Check for Camera2D
-	var camera = get_node_or_null("Camera2D")
-	if camera:
-		print("GameManager: Found Camera2D node. Positioning camera.")
-		camera.global_position = center_position
-		print("GameManager: Camera positioned at center:", center_position)
-	else:
-		print("GameManager: Camera2D node not found.")
+	# No longer controlling Camera2D, letting editor handle it
+	print("GameManager: Camera2D control removed, editor has full control.")
 
 	# Log final positions for debugging
 	print("GameManager: Final player position:", player.global_position if player else "Player not found.")
@@ -88,10 +82,16 @@ func position_dummy(dummy):
 			dummy_manager.global_position = center_position
 			print("GameManager: Positioned Dummy Manager at center:", center_position)
 
-		# Position the dummy relative to the Dummy Manager
-		dummy.position = Vector2.ZERO  # Reset local position to align with Dummy Manager
-		print("GameManager: Positioned dummy relative to Dummy Manager at:", dummy.position)
-		print("GameManager: Dummy global position after setting:", dummy.global_position)
+		# Delegate dummy positioning to the Dummy Manager
+		dummy_manager.call("reset_dummy_position", center_position)
+		print("GameManager: Delegated dummy positioning to Dummy Manager.")
+
+func _enforce_dummy_position(dummy):
+	if dummy and is_instance_valid(dummy):
+		# Reapply the dummy's position to ensure no drift
+		dummy.position = Vector2.ZERO
+		print("GameManager: Enforced dummy position during deferred call. Current position:", dummy.position)
+		print("GameManager: Dummy global position after enforcement:", dummy.global_position)
 
 func position_player(player):
 	if player:
