@@ -7,7 +7,7 @@ extends Area2D
 
 # Movement Properties
 var direction: Vector2 = Vector2.ZERO  # Initialize to zero vector
-var speed: float = 600  # Constant speed (no acceleration)
+var speed: float = 2000  # Constant speed (no acceleration)
 
 # Damage Properties
 var damage: float = 15
