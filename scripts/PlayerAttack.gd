@@ -4,10 +4,18 @@ var player: Node = null
 var last_fireball_time: float = 0.0  # Track when the last fireball was fired
 @export var FIREBALL_COOLDOWN: float = 0.2  # Cooldown between fireballs
 
+# Auto-attack parameters
+var last_auto_attack_time: float = 0.0  # Track when the last auto-attack was fired
+@export var AUTO_ATTACK_COOLDOWN: float = 0.5  # Cooldown between auto-attacks (adjust for fire rate)
+@export var AUTO_ATTACK_DAMAGE: float = 5.0  # Base damage for auto-attacks
+@export var AUTO_ATTACK_CRIT_CHANCE: float = 0.15  # Separate crit chance for auto-attacks
+var auto_attack_resource = preload("res://scenes/auto_attack.tscn")  # Path to the auto_attack scene
+
 func initialize(player_node: Node):
 	player = player_node
 	# Print the actual cooldown value being used to validate it was set correctly
 	print("Fireball cooldown initialized to: ", FIREBALL_COOLDOWN)
+	print("Auto-attack cooldown initialized to: ", AUTO_ATTACK_COOLDOWN)
 
 func _physics_process(delta):
 	if player:
@@ -15,6 +23,7 @@ func _physics_process(delta):
 		thrust_attack(delta)
 		sweep_process(delta)
 		shoot_fireball()
+		shoot_auto_attack()  # Add auto-attack functionality
 		point_sword_to_mouse()
 
 func thrust_attack(_delta):
@@ -188,6 +197,56 @@ func shoot_fireball():
 					push_error("Fireball resource is null!")
 			else:
 				print("No valid target selected!")
+				player.current_target = null
+
+func shoot_auto_attack():
+	if Input.is_action_pressed("ui_q"):  # Hold Q for auto-attack
+		# Get current time
+		var current_time = Time.get_ticks_msec() / 1000.0
+						
+		# Check if cooldown has passed
+		if current_time - last_auto_attack_time >= AUTO_ATTACK_COOLDOWN:
+			# Make sure player exists
+			if not is_instance_valid(player):
+				return
+				
+			# Make sure player has a valid target
+			if is_instance_valid(player.current_target) and player.current_target.is_in_group("Targetable"):
+				# Make sure auto-attack resource exists
+				if auto_attack_resource != null:
+					print("Firing auto-attack at target: ", player.current_target.name)
+					
+					# Safer instantiation
+					var auto_attack = auto_attack_resource.instantiate()
+					if auto_attack:
+						# Use safer scene tree access
+						var scene_root = player.get_tree().get_root()
+						if scene_root:
+							scene_root.add_child(auto_attack)
+							auto_attack.global_position = player.global_position
+							
+							# Initialize with custom parameters
+							auto_attack.initialize(
+								player.attack_direction, 
+								player.current_target,
+								AUTO_ATTACK_DAMAGE,  # Custom damage
+								-1,  # Use default speed
+								-1,  # Use default homing
+								true,
+								player
+							)
+							
+							# Set specific crit chance for auto-attacks
+							auto_attack.crit_chance = AUTO_ATTACK_CRIT_CHANCE
+							
+							# Update the last auto-attack time
+							last_auto_attack_time = current_time
+					else:
+						push_error("Failed to instantiate auto-attack!")
+				else:
+					push_error("Auto-attack resource could not be loaded!")
+			else:
+				print("No valid target selected for auto-attack!")
 				player.current_target = null
 
 func calculate_damage(base_damage: float = player.attack_power) -> Dictionary:

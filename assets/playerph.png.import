@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bawj6ipg4loh0"
-path="res://.godot/imported/burgir.png-26d67f43ea1f0243dabf4b8b609f40ce.ctex"
+uid="uid://vmxccw41tyaf"
+path="res://.godot/imported/playerph.png-f8959f27f020e25b2cf9e3d233ece164.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/burgir.png"
-dest_files=["res://.godot/imported/burgir.png-26d67f43ea1f0243dabf4b8b609f40ce.ctex"]
+source_file="res://assets/playerph.png"
+dest_files=["res://.godot/imported/playerph.png-f8959f27f020e25b2cf9e3d233ece164.ctex"]
 
 [params]
 

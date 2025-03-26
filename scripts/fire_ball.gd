@@ -10,7 +10,7 @@ var ExplosionEffect = null
 
 # Movement Properties
 var direction: Vector2 = Vector2.ZERO  # Initialize to zero vector
-var current_speed: float = 100  
+var current_speed: float = 50  
 const MAX_SPEED: float = 12000   
 const SPEED_MULTIPLIER: float = 20
 

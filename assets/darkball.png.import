@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bawj6ipg4loh0"
-path="res://.godot/imported/burgir.png-26d67f43ea1f0243dabf4b8b609f40ce.ctex"
+uid="uid://dbyjese64ghpq"
+path="res://.godot/imported/darkball.png-3d6b82c42f6b4591a06d32f3dc070f9f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/burgir.png"
-dest_files=["res://.godot/imported/burgir.png-26d67f43ea1f0243dabf4b8b609f40ce.ctex"]
+source_file="res://assets/darkball.png"
+dest_files=["res://.godot/imported/darkball.png-3d6b82c42f6b4591a06d32f3dc070f9f.ctex"]
 
 [params]
 
