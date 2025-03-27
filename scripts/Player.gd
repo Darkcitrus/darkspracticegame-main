@@ -200,3 +200,24 @@ func apply_knockback_from_fireball(fireball_position: Vector2, is_crit: bool = f
 	knockback_remaining_time = knockback_max_time
 	knockback_strength = actual_strength
 	print("Player knocked back from fireball in direction: ", knockback_direction)
+
+# Add a heal function to be called by healing items
+func heal(amount: float):
+	print("Player healed for: ", amount)
+	health = min(health + amount, max_health)
+	
+	# Update healthbar if it exists
+	if healthbar:
+		healthbar.value = health
+		print("Player health now: ", health)
+	
+	# Show floating heal number
+	spawn_floating_heal_number(amount)
+
+# Function to display healing numbers
+func spawn_floating_heal_number(heal_amount: float):
+	var floating_number_scene = load("res://scenes/floating_number.tscn")
+	if floating_number_scene:
+		var floating_number = floating_number_scene.instantiate()
+		get_tree().get_root().add_child(floating_number)
+		floating_number.setup_heal(int(heal_amount), global_position)

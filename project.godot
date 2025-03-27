@@ -43,6 +43,7 @@ Enemy=""
 World=""
 Effect=""
 Targetable=""
+Pickup=""
 
 [input]
 

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://bfj1bhi4oj6r6"]
+
+[ext_resource type="Script" uid="uid://xvppeutkqgsl" path="res://scripts/burgerpickup.gd" id="1_lp3hx"]
+[ext_resource type="Texture2D" uid="uid://bawj6ipg4loh0" path="res://assets/burgir.png" id="2_nam63"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4q7kc"]
+size = Vector2(235.294, 130)
+
+[node name="Burger" type="Area2D" groups=["Pickup"]]
+script = ExtResource("1_lp3hx")
+
+[node name="burgersprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_nam63")
+
+[node name="burgerbox" type="CollisionShape2D" parent="."]
+position = Vector2(3.8147e-06, -5)
+scale = Vector2(0.68, 1)
+shape = SubResource("RectangleShape2D_4q7kc")

@@ -19,6 +19,22 @@ func setup(damage: int, is_crit: bool = false, pos: Vector2 = Vector2.ZERO):
 	set_deferred("size", Vector2(100, 40))  # Set fixed size using set_deferred
 	position = start_pos - size * 0.5  # Center the text at the spawn point
 
+func setup_heal(amount: int, pos: Vector2 = Vector2.ZERO):
+	# Set text with a + prefix for healing
+	text = "+" + str(amount)
+	
+	# Set green color for healing
+	add_theme_color_override("font_color", Color(0.2, 1.0, 0.2))  # Bright green
+	
+	# Center the text
+	horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	
+	# Position adjustment (center above the entity)
+	start_pos = pos + Vector2(0, -30)  # Offset upward only
+	set_deferred("size", Vector2(100, 40))  # Set fixed size using set_deferred
+	position = start_pos - size * 0.5  # Center the text at the spawn point
+
 func _ready():
 	# Set up the label appearance
 	add_theme_font_size_override("font_size", 36)
