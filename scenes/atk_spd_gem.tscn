@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://t5nmfpla63jn"]
+
+[ext_resource type="Script" uid="uid://dfipgekd2c725" path="res://scripts/attack_speed_crystal.gd" id="1_v5dia"]
+[ext_resource type="Texture2D" uid="uid://dvtex6arx0jnp" path="res://assets/gae.png" id="2_740g6"]
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_auqf1"]
+points = PackedVector2Array(-29, 69, 67, 2, 74, -70, 26, -63, -48, 20, -75, 68)
+
+[node name="AtkSpdGem" type="Area2D"]
+script = ExtResource("1_v5dia")
+effect_duration = 5.0
+
+[node name="AtkSpdGemSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_740g6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("ConvexPolygonShape2D_auqf1")

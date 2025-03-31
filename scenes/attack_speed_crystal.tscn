@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://cyiylpkl1bcdr"]
+
+[ext_resource type="Script" path="res://scripts/attack_speed_crystal.gd" id="1_nbjiy"]
+[ext_resource type="Texture2D" uid="uid://cvkswukf8kxr4" path="res://assets/spdpot.png" id="2_vd1oj"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8owwb"]
+radius = 16.0
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_vdwho"]
+blend_mode = 1
+
+[node name="AttackSpeedCrystal" type="Area2D"]
+collision_layer = 8
+collision_mask = 3
+script = ExtResource("1_nbjiy")
+attack_speed_multiplier = 1.75
+effect_duration = 15.0
+glow_intensity = 1.0
+glow_color = Color(0, 0.8, 1, 0.7)
+glow_pulse_speed = 3.0
+glow_size = 3.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_8owwb")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_vdwho")
+texture = ExtResource("2_vd1oj")
+
+[node name="RespawnTimer" type="Timer" parent="."]
+wait_time = 20.0
+one_shot = true
