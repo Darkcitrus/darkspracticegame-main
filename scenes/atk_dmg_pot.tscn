@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8m82h614um2k"]
+
+[ext_resource type="Script" uid="uid://cbo2vtkfvlqs2" path="res://scripts/damage_potion.gd" id="1_u5eh2"]
+[ext_resource type="Texture2D" uid="uid://bjl8r4ffq83gj" path="res://assets/dmgpot.png" id="2_ndcxs"]
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_e1kg0"]
+points = PackedVector2Array(2, 8, 6, 4, 6, -1, 1, -8, -1, -8, -6, -1, -6, 4, -2, 8)
+
+[node name="AtkDmgPot" type="Area2D" groups=["Pickup"]]
+script = ExtResource("1_u5eh2")
+respawn_time = 10.0
+glow_intensity = 1.5
+glow_color = Color(1, 0.2, 0.2, 0.7)
+
+[node name="dmgpotsprite" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_ndcxs")
+
+[node name="dmgpotcollision" type="CollisionShape2D" parent="."]
+shape = SubResource("ConvexPolygonShape2D_e1kg0")

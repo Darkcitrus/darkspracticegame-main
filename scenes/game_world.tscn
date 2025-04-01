@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bufwvu6ado8vt"]
+[gd_scene load_steps=7 format=3 uid="uid://bufwvu6ado8vt"]
 
 [ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="1_o4vgp"]
 [ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_b5swx"]
 [ext_resource type="PackedScene" uid="uid://o888u5fliew8" path="res://scenes/world_border.tscn" id="3_jlaqq"]
 [ext_resource type="PackedScene" uid="uid://bfj1bhi4oj6r6" path="res://scenes/burger.tscn" id="4_0vfqx"]
 [ext_resource type="PackedScene" uid="uid://t5nmfpla63jn" path="res://scenes/atk_spd_gem.tscn" id="5_wbbl4"]
+[ext_resource type="PackedScene" uid="uid://c8m82h614um2k" path="res://scenes/atk_dmg_pot.tscn" id="6_6c6v5"]
 
 [node name="GameWorld" type="Node2D"]
 position = Vector2(640, 350)
@@ -27,12 +28,16 @@ position = Vector2(0, 8)
 scale = Vector2(0.354, 0.354)
 
 [node name="Burger" parent="." instance=ExtResource("4_0vfqx")]
-position = Vector2(-327, -171)
+position = Vector2(-381, -171)
 scale = Vector2(0.205, 0.205)
 
 [node name="AtkSpdGem" parent="." instance=ExtResource("5_wbbl4")]
-position = Vector2(-452, -172)
+position = Vector2(-469, -172)
 scale = Vector2(0.225, 0.225)
+
+[node name="AtkDmgPot" parent="." instance=ExtResource("6_6c6v5")]
+position = Vector2(-551, -171)
+scale = Vector2(2.245, 2.245)
 
 [editable path="Player"]
 [editable path="Dummy Manager"]
