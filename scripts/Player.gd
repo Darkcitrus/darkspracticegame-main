@@ -6,12 +6,6 @@ var dodging: bool = false
 var attacking: bool = false
 var dodge_recovering: bool = false
 var attack_power = 20
-var thrust_distance = 80
-var thrust_modifier: float = 1.5  # Modifier for thrust attack
-var sweep_modifier: float = 0.8  # Modifier for sweep attack
-var swinging_left: bool = true  # Track the current direction of the swing
-var swinging: bool = false  # Track if the sword is currently swinging
-var current_tween: Tween = null  # Store the current tween
 var attack_cooldown = 0.3  # attack cooldown in seconds
 var last_attack_time = 0
 var fire_ball: PackedScene = null  # Use safer resource loading with error checking
@@ -47,13 +41,13 @@ const DODGE_RECOVERY_TIME = 2.0
 @onready var dodge_recovery = $DodgeRecovery
 @onready var dodge_cooldown = $DodgeCooldown
 @onready var dodge_label = $DashCount
-@onready var sword = $sword
-@onready var sword_sprite = $sword/swordsprite
-@onready var hitbox = $sword/hitbox
-@onready var attackcd = $sword/hitbox/attackcd
+@onready var attack_area = $AttackArea # Area2D container for the hurtbox
+@onready var attack_hurtbox = $AttackArea/AttackHurtbox # The actual CollisionShape2D
+@onready var attackcd = $attackcd # Attack cooldown timer
 @onready var projectiles = $Projectiles
 @onready var respawn_timer: Timer = $RespawnTimer
 @onready var healthbar: TextureProgressBar = $HealthBar
+@onready var player_sprite = $PlayerSprite # Reference to the sprite for access by other scripts
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -85,10 +79,19 @@ func _ready():
 		healthbar.show()
 		print("Player healthbar initialized. Max health: ", max_health)
 	
-	# Make sure sword is in Effects group
-	$sword.add_to_group("Effects")
-	hitbox.disabled = true  # Disable the sword's hitbox by default
-	sword_sprite.visible = true  # Ensure the sword_sprite remains visible
+	# Disable attack hurtbox by default
+	if attack_hurtbox:
+		attack_hurtbox.disabled = true
+	else:
+		push_error("AttackHurtbox not found. Melee attacks will not work.")
+		
+	# Make sure the attackcd timer exists
+	if not attackcd:
+		attackcd = Timer.new()
+		add_child(attackcd)
+		attackcd.wait_time = 0.3
+		attackcd.one_shot = true
+		attackcd.connect("timeout", _on_attackcd_timeout)
 	
 	# Initialize dodge timer settings
 	dodge_timer.wait_time = 0.3  # Dash duration
@@ -107,6 +110,8 @@ func _ready():
 		$PlayerAttack.initialize(self)
 	if has_node("PlayerHealth"):
 		$PlayerHealth.initialize(self)
+	if has_node("PlayerAnimation"):
+		$PlayerAnimation.initialize(self)
 	
 	# Initialize target references
 	target = null
@@ -221,3 +226,7 @@ func spawn_floating_heal_number(heal_amount: float):
 		var floating_number = floating_number_scene.instantiate()
 		get_tree().get_root().add_child(floating_number)
 		floating_number.setup_heal(int(heal_amount), global_position)
+
+func _on_attackcd_timeout():
+	attacking = false
+	print("Attack cooldown ended")

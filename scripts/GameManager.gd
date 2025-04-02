@@ -8,6 +8,10 @@ var debug_mode = false
 var center_position = Vector2.ZERO
 var player_offset = Vector2(-250, 0)  # Player spawns 250px left of center
 
+# Fullscreen settings
+var is_fullscreen = false
+var last_f11_state = false
+
 func _ready():
 	# Calculate center position based on viewport size
 	_update_center_position()
@@ -24,6 +28,37 @@ func _ready():
 		get_tree().root.call_deferred("add_child", logger)
 	
 	# Defer the call to _position_entities to ensure all nodes are ready
+	call_deferred("_position_entities")
+	
+	# Initialize fullscreen state - use the actual current window mode
+	is_fullscreen = DisplayServer.window_get_mode() != DisplayServer.WINDOW_MODE_WINDOWED
+	print("Initial window mode: ", DisplayServer.window_get_mode(), " - Fullscreen: ", is_fullscreen)
+
+func _input(event):
+	# Handle F11 key specifically for fullscreen toggle
+	if event is InputEventKey and event.keycode == KEY_F11 and event.pressed and not event.echo:
+		toggle_fullscreen()
+		get_viewport().set_input_as_handled()  # Prevent the event from propagating
+
+func _process(_delta):
+	# Alternative F11 detection method as backup
+	if Input.is_action_just_pressed("ui_fullscreen"):
+		toggle_fullscreen()
+
+func toggle_fullscreen():
+	is_fullscreen = !is_fullscreen
+	
+	if is_fullscreen:
+		# Go to fullscreen borderless mode
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		print("Entered fullscreen mode: ", DisplayServer.window_get_mode())
+	else:
+		# Go back to windowed mode
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		print("Exited fullscreen mode: ", DisplayServer.window_get_mode())
+	
+	# Ensure entities maintain their relative positions
+	call_deferred("_update_center_position")
 	call_deferred("_position_entities")
 
 func _update_center_position():
