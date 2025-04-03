@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://chtib422n2147"]
+
+[ext_resource type="Script" uid="uid://dj6pki367eeth" path="res://scripts/spike_pad.gd" id="1_7tc0t"]
+[ext_resource type="Texture2D" uid="uid://bo3fg5n4dln3d" path="res://assets/spikepad.png" id="2_xwrh5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ys6rs"]
+size = Vector2(30, 30)
+
+[node name="SpikePad" type="Area2D"]
+script = ExtResource("1_7tc0t")
+
+[node name="SpikePadSprite" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_xwrh5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ys6rs")

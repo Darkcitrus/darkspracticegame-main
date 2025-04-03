@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bufwvu6ado8vt"]
+[gd_scene load_steps=10 format=3 uid="uid://bufwvu6ado8vt"]
 
 [ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="1_o4vgp"]
 [ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_b5swx"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://t5nmfpla63jn" path="res://scenes/atk_spd_gem.tscn" id="5_wbbl4"]
 [ext_resource type="PackedScene" uid="uid://c8m82h614um2k" path="res://scenes/atk_dmg_pot.tscn" id="6_6c6v5"]
 [ext_resource type="PackedScene" uid="uid://ptova16jy6e" path="res://scenes/mov_spd_pot.tscn" id="7_bhwwd"]
+[ext_resource type="PackedScene" uid="uid://cxhkwdjl7k1vi" path="res://scenes/bear_trap.tscn" id="8_pdbwf"]
+[ext_resource type="PackedScene" uid="uid://chtib422n2147" path="res://scenes/spike_pad.tscn" id="9_u1jpj"]
 
 [node name="GameWorld" type="Node2D"]
 position = Vector2(640, 350)
@@ -16,7 +18,7 @@ texture_filter = 5
 position = Vector2(-255, 0)
 platform_on_leave = 2
 
-[node name="DodgeRecovery" parent="Player" index="9"]
+[node name="DodgeRecovery" parent="Player" index="10"]
 one_shot = false
 
 [node name="Dummy Manager" parent="." instance=ExtResource("2_b5swx")]
@@ -43,6 +45,12 @@ scale = Vector2(2.245, 2.245)
 [node name="MovSpdPot" parent="." instance=ExtResource("7_bhwwd")]
 position = Vector2(-551, 87)
 scale = Vector2(2.365, 2.365)
+
+[node name="BearTrap" parent="." instance=ExtResource("8_pdbwf")]
+position = Vector2(221, 44)
+
+[node name="SpikePad" parent="." instance=ExtResource("9_u1jpj")]
+position = Vector2(350, 44)
 
 [editable path="Player"]
 [editable path="Dummy Manager"]

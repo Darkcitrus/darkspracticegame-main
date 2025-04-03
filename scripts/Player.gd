@@ -5,6 +5,7 @@ var can_dodge: bool = true
 var dodging: bool = false
 var attacking: bool = false
 var dodge_recovering: bool = false
+var is_trapped: bool = false  # New state to handle bear trap interaction
 var attack_power = 20
 var attack_cooldown = 0.3  # attack cooldown in seconds
 var last_attack_time = 0
@@ -137,6 +138,12 @@ func _verify_position():
 
 # Override the default _physics_process to handle knockback
 func _physics_process(delta):
+	# Skip movement if trapped by a bear trap
+	if is_trapped:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
+		
 	# Handle knockback if active
 	if knockback_active:
 		# Apply knockback force
@@ -187,7 +194,8 @@ func take_damage(amount: float, is_crit: bool = false):
 	if health <= 0 and alive:
 		alive = false
 		print("Player died!")
-		visible = false
+		# Don't hide the player immediately - let the animation system handle it
+		
 		# Start respawn timer
 		if respawn_timer:
 			respawn_timer.start()
@@ -230,3 +238,11 @@ func spawn_floating_heal_number(heal_amount: float):
 func _on_attackcd_timeout():
 	attacking = false
 	print("Attack cooldown ended")
+
+# Functions for bear trap interaction
+func trap_player():
+	is_trapped = true
+	velocity = Vector2.ZERO
+
+func release_player():
+	is_trapped = false

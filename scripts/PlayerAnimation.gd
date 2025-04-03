@@ -4,6 +4,8 @@ var player: Node = null
 var sprite: AnimatedSprite2D = null
 var base_run_speed: float = 250.0 # Store the default player run speed for comparison
 var last_direction_x: float = 1.0 # Keep track of last horizontal movement direction
+var hurt_animation_played: bool = false # Track if the hurt animation has been played while trapped
+var hurt_animation_finished: bool = false # Track if the hurt animation has completed
 
 func initialize(player_node: Node):
 	player = player_node
@@ -45,8 +47,27 @@ func update_animation():
 		
 	# Handle hurt animation (if you have a hurt state)
 	if player.knockback_active:
-		if not sprite.animation == "Hurt" or not sprite.is_playing():
-			play_animation("Hurt")
+		# If player is trapped, only play hurt animation once
+		if player.is_trapped:
+			if not hurt_animation_played:
+				play_animation("Hurt") 
+				hurt_animation_played = true
+				hurt_animation_finished = false
+		else:
+			# Normal hurt behavior when not trapped
+			if not sprite.animation == "Hurt" or not sprite.is_playing():
+				play_animation("Hurt")
+				hurt_animation_played = false
+		return
+	
+	# If we're here, we're not hurt anymore, reset the flags
+	hurt_animation_played = false
+	
+	# If trapped but not hurt, show idle animation
+	# Also show idle if hurt animation finished while trapped
+	if player.is_trapped:
+		if hurt_animation_finished or not sprite.animation == "Idle" or not sprite.is_playing():
+			play_animation("Idle")
 		return
 	
 	# Handle movement animations based on speed
@@ -109,7 +130,15 @@ func _on_animation_finished():
 		if not player.dodging:
 			update_animation()
 	elif sprite.animation == "Hurt":
-		update_animation()
+		# If the player is trapped, don't loop hurt animation
+		if player.is_trapped:
+			hurt_animation_finished = true
+			play_animation("Idle")
+		else:
+			update_animation()
 	elif sprite.animation == "Death":
-		# Stop at last frame of death animation
-		sprite.stop()
+			# When death animation is finished, notify the PlayerHealth script
+			if player.has_node("PlayerHealth"):
+				player.get_node("PlayerHealth").on_death_animation_finished()
+			# Keep the last frame visible
+			sprite.stop()

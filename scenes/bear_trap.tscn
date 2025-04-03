@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://cxhkwdjl7k1vi"]
+
+[ext_resource type="Texture2D" uid="uid://c17pc6n0j6qcu" path="res://assets/beartrapclosed.png" id="1_fd4jx"]
+[ext_resource type="Script" uid="uid://dtgdq83q8j6mc" path="res://scripts/bear_trap.gd" id="1_gbrjp"]
+[ext_resource type="Texture2D" uid="uid://cecqehxciynt3" path="res://assets/beartrap.png" id="2_gbrjp"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8fn3p"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_fd4jx")
+}],
+"loop": true,
+"name": &"Closed",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_gbrjp")
+}],
+"loop": true,
+"name": &"Open",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_p5mqs"]
+radius = 13.0
+
+[node name="BearTrap" type="Area2D"]
+script = ExtResource("1_gbrjp")
+
+[node name="BearTrapSprite" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_8fn3p")
+animation = &"Open"
+autoplay = "Open"
+
+[node name="BearTrapHitbox" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_p5mqs")
