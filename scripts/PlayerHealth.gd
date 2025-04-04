@@ -46,10 +46,34 @@ func on_death_animation_finished():
 	player.visible = false
 
 func _on_respawn_timer_timeout():
+	# Reset health
 	player.health = player.max_health
 	player.alive = true
 	player.visible = true
 	player.position = Vector2(100, 100)
+	
+	# Update the healthbar
 	if player.healthbar:
 		player.healthbar.value = player.health
-	print("Player respawned!")
+	
+	# Reset the player animation system's dying state
+	# This ensures the animation system knows we're no longer in the dying state
+	if player.has_node("PlayerAnimation"):
+		var animation_node = player.get_node("PlayerAnimation")
+		if animation_node.is_dying:
+			animation_node.is_dying = false
+	
+	# Reset any player input states to ensure inputs work after respawn
+	player.attacking = false
+	player.dodging = false
+	player.knockback_active = false
+	player.is_trapped = false
+	player.velocity = Vector2.ZERO
+	
+	# Reset movement abilities
+	player.can_dodge = true
+	player.dodges = player.MAX_DODGES
+	if player.dodge_label:
+		player.dodge_label.text = str(player.dodges)
+	
+	print("Player respawned and states reset!")

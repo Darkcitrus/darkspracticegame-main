@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bufwvu6ado8vt"]
+[gd_scene load_steps=11 format=3 uid="uid://bufwvu6ado8vt"]
 
 [ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="1_o4vgp"]
 [ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_b5swx"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://ptova16jy6e" path="res://scenes/mov_spd_pot.tscn" id="7_bhwwd"]
 [ext_resource type="PackedScene" uid="uid://cxhkwdjl7k1vi" path="res://scenes/bear_trap.tscn" id="8_pdbwf"]
 [ext_resource type="PackedScene" uid="uid://chtib422n2147" path="res://scenes/spike_pad.tscn" id="9_u1jpj"]
+[ext_resource type="PackedScene" uid="uid://jpyb18vqon6i" path="res://scenes/slow_zone.tscn" id="10_uh34q"]
 
 [node name="GameWorld" type="Node2D"]
 position = Vector2(640, 350)
@@ -51,6 +52,10 @@ position = Vector2(221, 44)
 
 [node name="SpikePad" parent="." instance=ExtResource("9_u1jpj")]
 position = Vector2(350, 44)
+
+[node name="slow_zone" parent="." instance=ExtResource("10_uh34q")]
+position = Vector2(-469, 278)
+scale = Vector2(1.585, 1.585)
 
 [editable path="Player"]
 [editable path="Dummy Manager"]

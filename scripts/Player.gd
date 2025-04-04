@@ -136,11 +136,34 @@ func _verify_position():
 	print("Player position verified after deferred call:", global_position)
 	print("Player: Position verified after deferred call:", global_position)
 
+# Check if the player can take actions (not dying, trapped, etc.)
+func can_take_actions() -> bool:
+	# Check if the death animation is playing
+	if has_node("PlayerAnimation") and $PlayerAnimation.is_death_animation_playing():
+		return false
+	
+	# Check other conditions that prevent actions
+	if not alive or is_trapped or knockback_active:
+		return false
+		
+	return true
+
 # Override the default _physics_process to handle knockback
 func _physics_process(delta):
+	# Check if the player can take actions
+	if not alive:
+		# Still process animation for death, but don't allow any movement or actions
+		if has_node("PlayerAnimation"):
+			$PlayerAnimation._physics_process(delta)
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
+		
 	# Skip movement if trapped by a bear trap
 	if is_trapped:
 		velocity = Vector2.ZERO
+		if has_node("PlayerAnimation"):
+			$PlayerAnimation._physics_process(delta)
 		move_and_slide()
 		return
 		
@@ -155,13 +178,24 @@ func _physics_process(delta):
 		else:
 			# Apply knockback movement
 			velocity = knockback_direction * knockback_strength
+			if has_node("PlayerAnimation"):
+				$PlayerAnimation._physics_process(delta)
 			move_and_slide()
 			return  # Skip normal movement processing
+	
+	# Check if the death animation is playing
+	if has_node("PlayerAnimation") and $PlayerAnimation.is_death_animation_playing():
+		# If death animation is playing, don't allow any actions
+		velocity = Vector2.ZERO
+		$PlayerAnimation._physics_process(delta) # Still process animation
+		move_and_slide()
+		return
 	
 	# Normal movement processing if no knockback
 	$PlayerMovement._physics_process(delta)
 	$PlayerAttack._physics_process(delta)
 	$PlayerHealth._physics_process(delta)
+	$PlayerAnimation._physics_process(delta)
 	move_and_slide()
 
 func _on_respawn_timer_timeout():

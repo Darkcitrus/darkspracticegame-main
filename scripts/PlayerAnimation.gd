@@ -6,6 +6,7 @@ var base_run_speed: float = 250.0 # Store the default player run speed for compa
 var last_direction_x: float = 1.0 # Keep track of last horizontal movement direction
 var hurt_animation_played: bool = false # Track if the hurt animation has been played while trapped
 var hurt_animation_finished: bool = false # Track if the hurt animation has completed
+var is_dying: bool = false # Track if the death animation is currently playing
 
 func initialize(player_node: Node):
 	player = player_node
@@ -29,6 +30,9 @@ func _physics_process(delta):
 func update_animation():
 	# Handle death animation as highest priority
 	if not player.alive:
+		if not is_dying:
+			is_dying = true # Set the dying flag when death animation starts
+			print("Death animation started - disabling player input")
 		play_animation("Death")
 		return
 		
@@ -137,8 +141,15 @@ func _on_animation_finished():
 		else:
 			update_animation()
 	elif sprite.animation == "Death":
+			# Reset dying flag when animation finishes (although player remains dead)
+			is_dying = false
+			print("Death animation finished")
 			# When death animation is finished, notify the PlayerHealth script
 			if player.has_node("PlayerHealth"):
 				player.get_node("PlayerHealth").on_death_animation_finished()
 			# Keep the last frame visible
 			sprite.stop()
+
+# Public function to check if death animation is playing
+func is_death_animation_playing() -> bool:
+	return is_dying

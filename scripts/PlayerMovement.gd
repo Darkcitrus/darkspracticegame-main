@@ -17,15 +17,18 @@ func initialize(player_node: Node):
 	dodge_cooldown.timeout.connect(_on_dodge_cooldown_timeout)
 
 func _physics_process(_delta):
-	# Skip movement if knockback is active
-	if player.knockback_active:
+	# Skip movement if player can't take actions
+	if not player or not player.can_take_actions():
 		return
 
 	# Normal movement code
-	if player:
-		handle_movement()
+	handle_movement()
 
 func handle_movement():
+	# Check again if the player can take actions (in case this is called directly)
+	if not player.can_take_actions():
+		return
+		
 	if not player.dodging:
 		player.move_input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var SPEED = player.run_speed if not player.dodging else player.dodge_speed
@@ -36,6 +39,10 @@ func handle_movement():
 			handle_dodge()
 
 func handle_dodge():
+	# One more check to ensure player can take actions
+	if not player.can_take_actions():
+		return
+		
 	if player.dodges > 0:
 		player.dodges -= 1 
 		print("Dodge started! Remaining dashes: " + str(player.dodges))

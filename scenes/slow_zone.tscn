@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://jpyb18vqon6i"]
+
+[ext_resource type="Texture2D" uid="uid://buqp2hxto8akt" path="res://assets/SLOWZONE.png" id="1_elogu"]
+[ext_resource type="Script" uid="uid://45qqewt30xpr" path="res://scripts/slow_zone.gd" id="1_vh3kn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lxnbx"]
+size = Vector2(126, 62)
+
+[node name="slow_zone" type="Area2D" groups=["Effect"]]
+script = ExtResource("1_vh3kn")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_elogu")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_lxnbx")

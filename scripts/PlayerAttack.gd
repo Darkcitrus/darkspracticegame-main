@@ -30,13 +30,23 @@ func initialize(player_node: Node):
 		print("AttackHurtbox position: ", player.attack_hurtbox.position)
 
 func _physics_process(delta):
-	if player:
-		player.attack_direction = (player.get_global_mouse_position() - player.global_position).normalized()
-		basic_attack(delta)
-		shoot_fireball()
-		shoot_auto_attack()  # Add auto-attack functionality
+	if not player:
+		return
+		
+	# Skip all attack processing if player can't take actions
+	if not player.can_take_actions():
+		return
+		
+	player.attack_direction = (player.get_global_mouse_position() - player.global_position).normalized()
+	basic_attack(delta)
+	shoot_fireball()
+	shoot_auto_attack()  # Add auto-attack functionality
 
 func basic_attack(_delta):
+	# Skip if player can't take actions
+	if not player.can_take_actions():
+		return
+		
 	# Changed from left_click to ui_e (E key)
 	if Input.is_action_pressed("ui_e") and not player.attacking:
 		var current_time = Time.get_ticks_msec() / 1000.0
@@ -123,6 +133,10 @@ func process_melee_damage(overlapping_objects, base_damage: float):
 				print("Target is in group: ", group)
 
 func shoot_fireball():
+	# Skip if player can't take actions
+	if not player.can_take_actions():
+		return
+		
 	# Changed from ui_e to ui_r (Q key)
 	if Input.is_action_pressed("ui_q"):
 		# Get current time
@@ -162,6 +176,10 @@ func shoot_fireball():
 				player.current_target = null
 
 func shoot_auto_attack():
+	# Skip if player can't take actions
+	if not player.can_take_actions():
+		return
+		
 	# Changed from ui_q to right_click
 	if Input.is_action_pressed("right_click"):  # Right click for auto-attack
 		# Get current time
