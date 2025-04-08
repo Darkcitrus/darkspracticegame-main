@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ys6rs"]
 size = Vector2(30, 30)
 
-[node name="SpikePad" type="Area2D"]
+[node name="SpikePad" type="Area2D" groups=["Effect"]]
 script = ExtResource("1_7tc0t")
 
 [node name="SpikePadSprite" type="Sprite2D" parent="."]

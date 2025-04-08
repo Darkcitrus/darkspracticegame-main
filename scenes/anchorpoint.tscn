@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://mfw308mkyt2x"]
+
+[ext_resource type="Texture2D" uid="uid://b0udwat2tywv0" path="res://assets/anchor.png" id="1_1uill"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ns874"]
+size = Vector2(30, 30)
+
+[node name="Anchorpoint" type="StaticBody2D" groups=["Grappleable", "world"]]
+texture_filter = 1
+
+[node name="AnchorSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_1uill")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ns874")

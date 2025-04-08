@@ -7,6 +7,7 @@ var last_direction_x: float = 1.0 # Keep track of last horizontal movement direc
 var hurt_animation_played: bool = false # Track if the hurt animation has been played while trapped
 var hurt_animation_finished: bool = false # Track if the hurt animation has completed
 var is_dying: bool = false # Track if the death animation is currently playing
+var is_teleporting: bool = false # Track if the teleport animation is currently playing
 
 func initialize(player_node: Node):
 	player = player_node
@@ -35,6 +36,14 @@ func update_animation():
 			print("Death animation started - disabling player input")
 		play_animation("Death")
 		return
+		
+	# Handle teleport animation as second highest priority
+	if player.teleporting:
+		is_teleporting = true
+		# We don't change the animation here, as it's controlled by the teleport script
+		return
+	else:
+		is_teleporting = false
 		
 	# Handle attack animation
 	if player.attacking:
@@ -153,3 +162,7 @@ func _on_animation_finished():
 # Public function to check if death animation is playing
 func is_death_animation_playing() -> bool:
 	return is_dying
+
+# Public function to check if teleport animation is playing
+func is_teleport_animation_playing() -> bool:
+	return is_teleporting

@@ -26,7 +26,7 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_p5mqs"]
 radius = 13.0
 
-[node name="BearTrap" type="Area2D"]
+[node name="BearTrap" type="Area2D" groups=["Effect"]]
 script = ExtResource("1_gbrjp")
 
 [node name="BearTrapSprite" type="AnimatedSprite2D" parent="."]

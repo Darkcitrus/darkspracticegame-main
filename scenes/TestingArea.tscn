@@ -19,7 +19,7 @@ position = Vector2(673, 359)
 position = Vector2(673, 359)
 script = ExtResource("2_uxidc")
 
-[node name="Background" type="Sprite2D" parent="." groups=["World"]]
+[node name="Background" type="Sprite2D" parent="." groups=["world"]]
 show_behind_parent = true
 light_mask = 9
 visibility_layer = 15

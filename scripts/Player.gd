@@ -6,6 +6,7 @@ var dodging: bool = false
 var attacking: bool = false
 var dodge_recovering: bool = false
 var is_trapped: bool = false  # New state to handle bear trap interaction
+var teleporting: bool = false # State to track teleportation
 var attack_power = 20
 var attack_cooldown = 0.3  # attack cooldown in seconds
 var last_attack_time = 0
@@ -113,6 +114,10 @@ func _ready():
 		$PlayerHealth.initialize(self)
 	if has_node("PlayerAnimation"):
 		$PlayerAnimation.initialize(self)
+	if has_node("PlayerTeleport"):
+		$PlayerTeleport.initialize(self)
+	if has_node("PlayerGrappling"):
+		$PlayerGrappling.initialize(self)
 	
 	# Initialize target references
 	target = null
@@ -142,8 +147,12 @@ func can_take_actions() -> bool:
 	if has_node("PlayerAnimation") and $PlayerAnimation.is_death_animation_playing():
 		return false
 	
+	# Check if teleport animation is playing
+	if has_node("PlayerAnimation") and $PlayerAnimation.is_teleport_animation_playing():
+		return false
+	
 	# Check other conditions that prevent actions
-	if not alive or is_trapped or knockback_active:
+	if not alive or is_trapped or knockback_active or teleporting:
 		return false
 		
 	return true
@@ -191,11 +200,23 @@ func _physics_process(delta):
 		move_and_slide()
 		return
 	
+	# Check if the teleport animation is playing
+	if teleporting:
+		# If teleport animation is playing, don't allow any actions
+		if has_node("PlayerAnimation"):
+			$PlayerAnimation._physics_process(delta) # Still process animation
+		move_and_slide()
+		return
+	
 	# Normal movement processing if no knockback
 	$PlayerMovement._physics_process(delta)
 	$PlayerAttack._physics_process(delta)
 	$PlayerHealth._physics_process(delta)
 	$PlayerAnimation._physics_process(delta)
+	if has_node("PlayerTeleport"):
+		$PlayerTeleport._physics_process(delta)
+	if has_node("PlayerGrappling"):
+		$PlayerGrappling._physics_process(delta)
 	move_and_slide()
 
 func _on_respawn_timer_timeout():

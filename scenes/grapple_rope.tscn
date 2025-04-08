@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://3rwx5cdfi3ah"]
+
+[ext_resource type="Script" uid="uid://6jceko5h8v4r" path="res://scripts/grapple_rope.gd" id="1_dh86s"]
+
+[node name="GrappleRope" type="Node2D"]
+z_index = -1
+script = ExtResource("1_dh86s")

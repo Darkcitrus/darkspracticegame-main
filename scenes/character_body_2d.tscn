@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=3 uid="uid://bddudkfbtetv1"]
+[gd_scene load_steps=86 format=3 uid="uid://bddudkfbtetv1"]
 
 [ext_resource type="Script" uid="uid://dtmjukaqml2hg" path="res://scripts/Player.gd" id="1_xyfxo"]
 [ext_resource type="Script" uid="uid://c5ejhctead2w4" path="res://scripts/PlayerMovement.gd" id="2_61f6j"]
@@ -11,7 +11,9 @@
 [ext_resource type="Script" uid="uid://dra4pmh0njenk" path="res://scripts/dash_count.gd" id="6_ns87m"]
 [ext_resource type="Texture2D" uid="uid://br473idc0blw4" path="res://assets/Warrior/Individual Sprite/Attack/Warrior_Attack_2.png" id="6_q3p54"]
 [ext_resource type="Script" uid="uid://d4jelq3g5uyw5" path="res://scripts/PlayerAnimation.gd" id="6_xyzt1"]
+[ext_resource type="Script" uid="uid://b5q4bi7m22qsb" path="res://scripts/PlayerTeleport.gd" id="6_yedmq"]
 [ext_resource type="Texture2D" uid="uid://dsew1n0v7hlgk" path="res://assets/Warrior/Individual Sprite/Attack/Warrior_Attack_3.png" id="7_86134"]
+[ext_resource type="Script" uid="uid://bpdqr1b68sfx7" path="res://scripts/PlayerGrappling.gd" id="7_grapple"]
 [ext_resource type="Texture2D" uid="uid://himk81dluyp5" path="res://assets/Warrior/Individual Sprite/Attack/Warrior_Attack_4.png" id="8_fd7s8"]
 [ext_resource type="Texture2D" uid="uid://vrtim446w14e" path="res://assets/Warrior/Individual Sprite/Attack/Warrior_Attack_5.png" id="9_xnlan"]
 [ext_resource type="Texture2D" uid="uid://dsbj1toymcdpi" path="res://assets/Warrior/Individual Sprite/Attack/Warrior_Attack_6.png" id="10_0ehsx"]
@@ -62,6 +64,24 @@
 [ext_resource type="Texture2D" uid="uid://d00ygn618yo3f" path="res://assets/Warrior/Individual Sprite/Run/Warrior_Run_6.png" id="51_csip1"]
 [ext_resource type="Texture2D" uid="uid://cr5cdrfqye5ss" path="res://assets/Warrior/Individual Sprite/Run/Warrior_Run_7.png" id="52_oh4wy"]
 [ext_resource type="Texture2D" uid="uid://drixu5aspi02m" path="res://assets/Warrior/Individual Sprite/Run/Warrior_Run_8.png" id="53_ge44x"]
+[ext_resource type="Texture2D" uid="uid://d1sfbwr2x52u7" path="res://assets/warrior_tp_end/warrior_tp_end1.png" id="59_lgcdd"]
+[ext_resource type="Texture2D" uid="uid://v7mehee76jn4" path="res://assets/warrior_tp_end/warrior_tp_end2.png" id="60_yedmq"]
+[ext_resource type="Texture2D" uid="uid://23275b6cjqob" path="res://assets/warrior_tp_end/warrior_tp_end3.png" id="61_ed0e4"]
+[ext_resource type="Texture2D" uid="uid://b8iavqo4ul462" path="res://assets/warrior_tp_end/warrior_tp_end4.png" id="62_xq601"]
+[ext_resource type="Texture2D" uid="uid://d052n1fivkuf2" path="res://assets/warrior_tp_end/warrior_tp_end5.png" id="63_13p1l"]
+[ext_resource type="Texture2D" uid="uid://cf6tc7ab1dqen" path="res://assets/warrior_tp_end/warrior_tp_end6.png" id="64_varqr"]
+[ext_resource type="Texture2D" uid="uid://vxm4fj08k38l" path="res://assets/warrior_tp_end/warrior_tp_end7.png" id="65_v2ud3"]
+[ext_resource type="Texture2D" uid="uid://b4gr0dhvo10hn" path="res://assets/warrior_tp_end/warrior_tp_end8.png" id="66_qfk0j"]
+[ext_resource type="Texture2D" uid="uid://csof8ctl7xo58" path="res://assets/warrior_tp_end/warrior_tp_end9.png" id="67_c5s6b"]
+[ext_resource type="Texture2D" uid="uid://b45l60a88esta" path="res://assets/warrior_tp_start/warrior_tp_start1.png" id="68_1oq63"]
+[ext_resource type="Texture2D" uid="uid://dth538xij2ehg" path="res://assets/warrior_tp_start/warrior_tp_start2.png" id="69_d8mmc"]
+[ext_resource type="Texture2D" uid="uid://brbyjn1b8t1cv" path="res://assets/warrior_tp_start/warrior_tp_start3.png" id="70_qn2ue"]
+[ext_resource type="Texture2D" uid="uid://bfn4ng6xooc13" path="res://assets/warrior_tp_start/warrior_tp_start4.png" id="71_5l7ox"]
+[ext_resource type="Texture2D" uid="uid://dc6kiqm7ddy6" path="res://assets/warrior_tp_start/warrior_tp_start5.png" id="72_3htqg"]
+[ext_resource type="Texture2D" uid="uid://cmatmuppgo5pi" path="res://assets/warrior_tp_start/warrior_tp_start6.png" id="73_m4se0"]
+[ext_resource type="Texture2D" uid="uid://boq53rbmphhid" path="res://assets/warrior_tp_start/warrior_tp_start7.png" id="74_8fsrt"]
+[ext_resource type="Texture2D" uid="uid://b5oqi854dicof" path="res://assets/warrior_tp_start/warrior_tp_start8.png" id="75_8g6bl"]
+[ext_resource type="Texture2D" uid="uid://dan0kwh03f142" path="res://assets/warrior_tp_start/warrior_tp_start9.png" id="76_4jyt3"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_srfhh"]
 animations = [{
@@ -258,6 +278,70 @@ animations = [{
 "loop": false,
 "name": &"Slide",
 "speed": 6.0
+}, {
+"frames": [{
+"duration": 0.1,
+"texture": ExtResource("59_lgcdd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("60_yedmq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("61_ed0e4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("62_xq601")
+}, {
+"duration": 1.0,
+"texture": ExtResource("63_13p1l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("64_varqr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("65_v2ud3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("66_qfk0j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("67_c5s6b")
+}],
+"loop": false,
+"name": &"Teleport End",
+"speed": 30.0
+}, {
+"frames": [{
+"duration": 0.1,
+"texture": ExtResource("68_1oq63")
+}, {
+"duration": 1.0,
+"texture": ExtResource("69_d8mmc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("70_qn2ue")
+}, {
+"duration": 1.0,
+"texture": ExtResource("71_5l7ox")
+}, {
+"duration": 1.0,
+"texture": ExtResource("72_3htqg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("73_m4se0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("74_8fsrt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("75_8g6bl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("76_4jyt3")
+}],
+"loop": false,
+"name": &"Teleport Start",
+"speed": 30.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8nwgm"]
@@ -286,13 +370,21 @@ script = ExtResource("4_ursou")
 [node name="PlayerAnimation" type="Node2D" parent="."]
 script = ExtResource("6_xyzt1")
 
+[node name="PlayerTeleport" type="Node2D" parent="."]
+script = ExtResource("6_yedmq")
+
+[node name="PlayerGrappling" type="Node2D" parent="."]
+script = ExtResource("7_grapple")
+
 [node name="PlayerSprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 5
 position = Vector2(-2.27374e-13, 5.68434e-14)
 scale = Vector2(4.20391, 4.20391)
 sprite_frames = SubResource("SpriteFrames_srfhh")
-animation = &"Hurt"
+animation = &"Teleport End"
 autoplay = "Idle"
+frame = 8
+frame_progress = 1.0
 offset = Vector2(6.19888e-06, -1.5684)
 
 [node name="PlayerCollision" type="CollisionShape2D" parent="." groups=["Player"]]
