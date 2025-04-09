@@ -52,15 +52,9 @@ func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			left_click_pressed = event.pressed
-			
-			# If pressed and can teleport but player is attacking, don't teleport
-			if event.pressed and can_teleport and player.can_take_actions():
-				# Only teleport if the player isn't currently attacking
-				if not player.attacking:
-					teleport()
-					# Prevent this click from also triggering an attack
-					get_viewport().set_input_as_handled()
-	# Check specifically for the "teleport" action
+			# We no longer teleport on left click, only track the state
+	
+	# Only teleport when the dedicated teleport action is pressed
 	if event.is_action_pressed("teleport") and can_teleport and player.can_take_actions():
 		teleport()
 		get_viewport().set_input_as_handled()

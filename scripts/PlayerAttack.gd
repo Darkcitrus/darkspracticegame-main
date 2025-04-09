@@ -33,8 +33,8 @@ func _physics_process(delta):
 	if not player:
 		return
 		
-	# Skip all attack processing if player can't take actions
-	if not player.can_take_actions():
+	# Allow combat actions even when trapped by using can_take_combat_actions
+	if not player.can_take_combat_actions():
 		return
 		
 	player.attack_direction = (player.get_global_mouse_position() - player.global_position).normalized()
@@ -43,12 +43,12 @@ func _physics_process(delta):
 	shoot_auto_attack()  # Add auto-attack functionality
 
 func basic_attack(_delta):
-	# Skip if player can't take actions
-	if not player.can_take_actions():
+	# Allow combat actions even when trapped
+	if not player.can_take_combat_actions():
 		return
 		
-	# Changed from left_click to ui_e (E key)
-	if Input.is_action_pressed("ui_e") and not player.attacking:
+	# Changed from ui_e to melee_attack
+	if Input.is_action_pressed("melee_attack") and not player.attacking:
 		var current_time = Time.get_ticks_msec() / 1000.0
 
 		if current_time - player.last_attack_time >= player.attack_cooldown:
@@ -133,12 +133,12 @@ func process_melee_damage(overlapping_objects, base_damage: float):
 				print("Target is in group: ", group)
 
 func shoot_fireball():
-	# Skip if player can't take actions
-	if not player.can_take_actions():
+	# Allow combat actions even when trapped
+	if not player.can_take_combat_actions():
 		return
 		
-	# Changed from ui_e to ui_r (Q key)
-	if Input.is_action_pressed("ui_q"):
+	# Changed from ui_q to fireball action
+	if Input.is_action_pressed("fireball"):
 		# Get current time
 		var current_time = Time.get_ticks_msec() / 1000.0
 						
@@ -176,12 +176,12 @@ func shoot_fireball():
 				player.current_target = null
 
 func shoot_auto_attack():
-	# Skip if player can't take actions
-	if not player.can_take_actions():
+	# Allow combat actions even when trapped
+	if not player.can_take_combat_actions():
 		return
 		
-	# Changed from ui_q to right_click
-	if Input.is_action_pressed("right_click"):  # Right click for auto-attack
+	# Changed from right_click to ranged_attack
+	if Input.is_action_pressed("ranged_attack"):  # Use ranged_attack input for auto-attack
 		# Get current time
 		var current_time = Time.get_ticks_msec() / 1000.0
 						

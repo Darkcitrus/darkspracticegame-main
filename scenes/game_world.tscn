@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://bufwvu6ado8vt"]
 
-[ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/character_body_2d.tscn" id="1_o4vgp"]
+[ext_resource type="PackedScene" uid="uid://bddudkfbtetv1" path="res://scenes/player.tscn" id="1_o4vgp"]
 [ext_resource type="PackedScene" uid="uid://d3mu8vdkubyp8" path="res://scenes/dummy_manager.tscn" id="2_b5swx"]
 [ext_resource type="PackedScene" uid="uid://o888u5fliew8" path="res://scenes/world_border.tscn" id="3_jlaqq"]
 [ext_resource type="PackedScene" uid="uid://bfj1bhi4oj6r6" path="res://scenes/burger.tscn" id="4_0vfqx"]
@@ -58,7 +58,7 @@ position = Vector2(350, 44)
 position = Vector2(-469, 278)
 scale = Vector2(1.585, 1.585)
 
-[node name="Anchorpoint" parent="." groups=["world"] instance=ExtResource("11_ph1f2")]
+[node name="Anchorpoint" parent="." instance=ExtResource("11_ph1f2")]
 position = Vector2(0, 106)
 
 [editable path="Player"]

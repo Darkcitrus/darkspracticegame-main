@@ -4,10 +4,11 @@ var player: CharacterBody2D = null
 var grappling: bool = false
 var hook_in_flight: bool = false  # New variable to track hook in flight
 var grapple_point: Vector2 = Vector2.ZERO
-var grapple_range: float = 500.0  # Maximum distance the grapple can travel
+@export var grapple_range: float = 500.0  # Maximum distance the grapple can travel
 var swing_speed: float = 4.0  # Speed of the swing rotation
 var swing_direction: int = 1  # 1 for clockwise, -1 for counter-clockwise
 var swing_radius: float = 0.0  # Distance between player and grapple point
+@export var grapple_pull_speed: float = 12.0  # Speed at which the player is pulled toward the grapple point
 var grapple_projectile_scene: PackedScene = null
 var current_grapple_projectile = null
 var angle: float = 0.0
@@ -43,6 +44,15 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("grapple"):
 		print("R key pressed! Trying to shoot grapple...")
 		
+	# Update rope position if hook is in flight
+	if hook_in_flight and current_grapple_projectile and is_instance_valid(current_grapple_projectile):
+		if grapple_rope:
+			grapple_rope.visible = true  # Ensure the rope is visible
+			grapple_rope.set_points(player.global_position, current_grapple_projectile.global_position)
+	elif hook_in_flight:
+		# If the hook is no longer valid, release the grapple
+		release_grapple()
+	
 	# Handle grapple input - Only allow shooting if no hook is in flight or attached
 	if Input.is_action_just_pressed("grapple") and not grappling and not hook_in_flight:
 		print("Shooting grapple hook!")
@@ -52,15 +62,9 @@ func _physics_process(delta):
 	if Input.is_action_just_released("grapple") and (grappling or hook_in_flight):
 		release_grapple()
 	
-	# Process swing mechanics if grappling
+	# Process pull mechanics if grappling
 	if grappling:
-		process_swing(delta)
-		
-		# Control swing direction with left/right input
-		if Input.is_action_pressed("ui_left"):
-			swing_direction = -1
-		elif Input.is_action_pressed("ui_right"):
-			swing_direction = 1
+		process_pull(delta)
 
 func shoot_grapple():
 	# First ensure any existing hooks are cleaned up
@@ -82,6 +86,11 @@ func shoot_grapple():
 	# Create the grapple projectile
 	current_grapple_projectile = grapple_projectile_scene.instantiate()
 	get_tree().get_root().add_child(current_grapple_projectile)
+	
+	# Make rope visible right away when shooting
+	if grapple_rope:
+		grapple_rope.visible = true
+		grapple_rope.set_points(player.global_position, current_grapple_projectile.global_position)
 	
 	# Set initial position slightly away from player in the direction of throw
 	# This helps prevent colliding with the player immediately
@@ -121,18 +130,29 @@ func on_grapple_hit(target_position):
 	
 	# The hook itself will stop moving due to the 'attached' flag we added
 
-func process_swing(delta):
-	# Update angle based on swing speed and direction
-	angle += swing_direction * swing_speed * delta
+func process_pull(delta):
+	# Calculate direction from player to grapple point
+	var pull_direction = (grapple_point - player.global_position).normalized()
 	
-	# Calculate new position based on angle and radius
-	var new_pos = grapple_point + Vector2(cos(angle), sin(angle)) * swing_radius
+	# Calculate distance to grapple point
+	var distance_to_point = player.global_position.distance_to(grapple_point)
 	
-	# Move the player to the new position
-	player.velocity = (new_pos - player.global_position) / delta
+	# Calculate pull speed - use faster speed when further away
+	var current_pull_speed = grapple_pull_speed * (1.0 + distance_to_point / 200.0)
+	
+	# If very close to the target, slow down to prevent overshooting
+	if distance_to_point < 50:
+		current_pull_speed *= distance_to_point / 50.0
+	
+	# Set player velocity toward grapple point
+	player.velocity = pull_direction * current_pull_speed * 100
 	
 	# Update rope position
 	update_rope_position()
+	
+	# If we're very close to the grapple point, consider releasing
+	if distance_to_point < 10:
+		release_grapple()
 
 func update_rope_position():
 	if grapple_rope:
@@ -149,7 +169,7 @@ func release_grapple():
 		current_grapple_projectile.queue_free()
 	current_grapple_projectile = null
 	
-	# Hide the rope
+	# Hide rope but DON'T delete it
 	if grapple_rope:
 		grapple_rope.visible = false
 	

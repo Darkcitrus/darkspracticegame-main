@@ -152,9 +152,32 @@ func can_take_actions() -> bool:
 		return false
 	
 	# Check other conditions that prevent actions
-	if not alive or is_trapped or knockback_active or teleporting:
+	if not alive or knockback_active or teleporting:
 		return false
 		
+	# For general actions, is_trapped is considered a blocker
+	# For combat actions specifically, use can_take_combat_actions() instead
+	if is_trapped:
+		return false
+		
+	return true
+
+# Check if the player can take combat actions (attack, ranged attack, fireball)
+# This allows attacking even when trapped
+func can_take_combat_actions() -> bool:
+	# Check if the death animation is playing
+	if has_node("PlayerAnimation") and $PlayerAnimation.is_death_animation_playing():
+		return false
+	
+	# Check if teleport animation is playing
+	if has_node("PlayerAnimation") and $PlayerAnimation.is_teleport_animation_playing():
+		return false
+	
+	# Check conditions that prevent combat actions
+	if not alive or knockback_active or teleporting:
+		return false
+		
+	# Note: is_trapped is NOT checked here, allowing combat while trapped
 	return true
 
 # Override the default _physics_process to handle knockback
