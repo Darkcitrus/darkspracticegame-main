@@ -155,9 +155,11 @@ func _handle_hit(object):
 		var damage_info = calculate_damage()
 		object.take_damage(damage_info["damage"], damage_info["is_crit"])
 		
- 		# Apply knockback based on object type
+ 		# Apply knockback based on object type and source
 		if object.has_method("apply_knockback_from_fireball"):
-			object.apply_knockback_from_fireball(global_position, damage_info["is_crit"])
+			# Only apply knockback if the source is NOT a dummy
+			if not (source and source.is_in_group("Enemy")):
+				object.apply_knockback_from_fireball(global_position, damage_info["is_crit"])
 	
 	# Spawn effect and destroy - using immediate destruction for reliability
 	spawn_explosion_effect()
