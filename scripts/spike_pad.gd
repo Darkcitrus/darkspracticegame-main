@@ -39,8 +39,8 @@ func _physics_process(_delta):
 func apply_damage():
 	# Check if player is valid and has take_damage method
 	if is_instance_valid(current_player) and current_player.has_method("take_damage"):
-		print("Spike pad dealing " + str(damage) + " damage to player")
-		current_player.take_damage(damage, false)  # Apply damage (not a critical hit)
+		print("Spike pad dealing " + str(damage) + " physical damage to player")
+		current_player.take_damage(damage, false, "physical")  # Apply physical damage (not a critical hit)
 		
 		 # Apply knockback to trigger hurt animation
 		apply_knockback_to_player(current_player)

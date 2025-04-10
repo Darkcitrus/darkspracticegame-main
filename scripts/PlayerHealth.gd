@@ -14,16 +14,11 @@ func handle_health():
 		player.alive = false
 		die()
 
-func take_damage(amount):
+func take_damage(amount, is_crit: bool = false, damage_type: String = "physical"):
 	if not player.dodging and player.alive:
-		print("Player taking damage: ", amount)
-		player.health -= amount
-		print("Player health now: ", player.health)
+		# Delegate to the main player.take_damage which handles resistance calculations
+		player.take_damage(amount, is_crit, damage_type)
 		
-		if player.healthbar:
-			print("Updating player healthbar to: ", player.health)
-			player.healthbar.value = player.health
-			
 		if player.health <= 0:
 			die()
 

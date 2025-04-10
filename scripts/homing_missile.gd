@@ -116,7 +116,8 @@ func _handle_hit(object):
 	# Try to apply damage if possible
 	if object.has_method("take_damage"):
 		var damage_info = calculate_damage()
-		object.take_damage(damage_info["damage"], damage_info["is_crit"])
+		# Homing missiles deal magical damage, similar to fireballs
+		object.take_damage(damage_info["damage"], damage_info["is_crit"], "magical")
 		
 		# Apply knockback based on object type
 		if object.has_method("apply_knockback_from_fireball"):

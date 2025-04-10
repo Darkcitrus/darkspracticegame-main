@@ -118,12 +118,13 @@ func process_melee_damage(overlapping_objects, base_damage: float):
 		print("Checking collision with: ", obj.name)
 		var target = obj.get_parent() if obj is Area2D else obj
 		if target.is_in_group("Enemy"):
-			var damage_info = calculate_damage(base_damage)
+			var damage_info = calculate_damage(base_damage)			
 			print("Processing melee hit on: ", target.name)
 			print("Attack Power: ", base_damage, " Final Damage: ", damage_info["damage"], " Crit: ", damage_info["is_crit"])
 			if target.has_method("take_damage"):
-				target.take_damage(damage_info["damage"], damage_info["is_crit"])
-				print("Damage applied to enemy")
+				# Melee attacks deal physical damage
+				target.take_damage(damage_info["damage"], damage_info["is_crit"], "physical")
+				print("Physical damage applied to enemy")
 			else:
 				print("Target does not have take_damage method")
 		else:
@@ -219,6 +220,10 @@ func shoot_auto_attack():
 							
 							# Set specific crit chance for auto-attacks
 							auto_attack.crit_chance = AUTO_ATTACK_CRIT_CHANCE
+							
+							# Specify that auto-attacks deal physical damage (for resistance calculations)
+							if auto_attack.has_method("set_damage_type"):
+								auto_attack.set_damage_type("physical")
 							
 							# Update the last auto-attack time
 							last_auto_attack_time = current_time

@@ -309,7 +309,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"Teleport End",
-"speed": 30.0
+"speed": 40.0
 }, {
 "frames": [{
 "duration": 0.1,
@@ -341,7 +341,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"Teleport Start",
-"speed": 30.0
+"speed": 40.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8nwgm"]
@@ -382,10 +382,8 @@ texture_filter = 5
 position = Vector2(-2.27374e-13, 5.68434e-14)
 scale = Vector2(4.20391, 4.20391)
 sprite_frames = SubResource("SpriteFrames_srfhh")
-animation = &"Teleport End"
+animation = &"Teleport Start"
 autoplay = "Idle"
-frame = 8
-frame_progress = 1.0
 offset = Vector2(6.19888e-06, -1.5684)
 
 [node name="PlayerCollision" type="CollisionShape2D" parent="." groups=["Player"]]

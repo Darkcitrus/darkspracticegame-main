@@ -178,21 +178,23 @@ func _on_area_entered(area: Area2D) -> void:
 			var damage_info = area.calculate_damage()
 			take_damage(damage_info["damage"], damage_info["is_crit"])
 
-func take_damage(amount, is_crit: bool = false):
+func take_damage(amount, is_crit: bool = false, damage_type: String = "physical"):
 	if not alive:
 		return
-		
+	
+	# Dummy has 0 resistances as requested, so we use the raw damage amount
+	# No need to calculate resistances like for the player
 	health -= amount
 	
 	# Apply knockback
 	apply_knockback_from_hit()
 	
-	# Spawn floating number with adjusted position
+	# Spawn floating number with adjusted position and damage type
 	if alive:  # Ensure the dummy is still alive before accessing global_position
 		var floating_num = FloatingNumber.instantiate() as Label
 		if floating_num:
 			get_tree().get_root().add_child(floating_num)
-			floating_num.setup(amount, is_crit, global_position)
+			floating_num.setup_with_type(amount, is_crit, damage_type, global_position)
 	
 	if healthbar:
 		healthbar.value = health

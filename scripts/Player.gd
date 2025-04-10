@@ -19,6 +19,12 @@ var alive: bool = true
 var target: Node2D = null  # For compatibility with scripts that might use 'target' directly
 var current_target: Node2D = null  # Add this near the other state variables
 
+# Damage resistance variables
+var armor: float = 0.0  # Physical damage reduction (0.0 to 0.95 or 0% to 95%)
+var magic_resist: float = 0.0  # Magical damage reduction (0.0 to 0.95 or 0% to 95%)
+const MAX_RESIST: float = 0.95  # Maximum resistance cap (95%)
+var damage_resist_while_dodging: float = 0.95  # 95% damage resistance when dodging
+
 # Knockback properties
 var knockback_active = false
 var knockback_direction = Vector2.ZERO
@@ -256,12 +262,37 @@ func clear_current_target() -> void:
 	print("Target cleared")
 
 # Add this function to handle damage from fireballs and other sources
-func take_damage(amount: float, is_crit: bool = false):
+func take_damage(amount: float, is_crit: bool = false, damage_type: String = "physical"):
 	if not alive:
 		return
 	
-	print("Player taking damage: ", amount, " Critical: ", is_crit)
-	health -= amount
+	# Apply dodge damage resistance if player is dodging
+	var final_amount = amount
+	if dodging:
+		# True damage ignores dodge resistance
+		if damage_type.to_lower() == "true":
+			final_amount = amount
+			print("True damage ignores dodge resistance: ", amount)
+		else:
+			final_amount = amount * (1.0 - damage_resist_while_dodging)
+			print("Dodge damage reduction applied: ", amount, " -> ", final_amount)
+	# Apply armor or magic resistance based on damage type
+	elif damage_type.to_lower() == "physical":
+		final_amount = amount * (1.0 - min(armor, MAX_RESIST))
+		print("Physical damage reduced by armor: ", amount, " -> ", final_amount)
+	elif damage_type.to_lower() == "magical":
+		final_amount = amount * (1.0 - min(magic_resist, MAX_RESIST))
+		print("Magical damage reduced by magic resist: ", amount, " -> ", final_amount)
+	elif damage_type.to_lower() == "true":
+		# True damage ignores all resistances
+		final_amount = amount
+		print("True damage ignores resistances: ", amount)
+	
+	print("Player taking damage: ", final_amount, " (Original: ", amount, ") Critical: ", is_crit, " Type: ", damage_type)
+	health -= final_amount
+	
+	# Show floating damage number with appropriate color based on damage type
+	spawn_floating_damage_number(final_amount, is_crit, damage_type)
 	
 	# Update healthbar if it exists
 	if healthbar:
@@ -312,6 +343,14 @@ func spawn_floating_heal_number(heal_amount: float):
 		var floating_number = floating_number_scene.instantiate()
 		get_tree().get_root().add_child(floating_number)
 		floating_number.setup_heal(int(heal_amount), global_position)
+
+# Function to display damage numbers with appropriate color based on damage type
+func spawn_floating_damage_number(damage_amount: float, is_crit: bool, damage_type: String):
+	var floating_number_scene = load("res://scenes/floating_number.tscn")
+	if floating_number_scene:
+		var floating_number = floating_number_scene.instantiate()
+		get_tree().get_root().add_child(floating_number)
+		floating_number.setup_with_type(int(damage_amount), is_crit, damage_type, global_position)
 
 func _on_attackcd_timeout():
 	attacking = false
