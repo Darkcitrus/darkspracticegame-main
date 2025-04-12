@@ -43,6 +43,7 @@ var dodges = 2
 const MAX_DODGES = 2
 const DODGE_COOLDOWN_TIME = 1.0
 const DODGE_RECOVERY_TIME = 2.0
+var friction: float = 1.0  # Default friction (1.0 = full control, lower values = slippery)
 
 # Reference variables
 @onready var dodge_timer = $DodgeTimer
@@ -246,6 +247,36 @@ func _physics_process(delta):
 		$PlayerTeleport._physics_process(delta)
 	if has_node("PlayerGrappling"):
 		$PlayerGrappling._physics_process(delta)
+		
+	# Apply friction to movement before calling move_and_slide
+	# Lower friction (caused by ice spots) makes player continue moving in their current direction
+	if friction < 1.0:
+		# Store the previous velocity for momentum
+		if not has_meta("prev_velocity"):
+			set_meta("prev_velocity", velocity)
+			
+		var prev_velocity = get_meta("prev_velocity")
+		
+		# On ice, we want to maintain previous momentum, making it hard to change direction
+		if move_input.length() > 0:
+			# When trying to move on ice, only a small portion of input affects movement
+			# Most of the movement comes from previous momentum (sliding)
+			velocity = prev_velocity.lerp(move_input * run_speed, friction)
+		else:
+			# When not pressing movement keys on ice, continue sliding with minimal slowdown
+			velocity = prev_velocity * 0.99  # Very slow deceleration on ice
+		
+		# Debug print to verify sliding effect is working
+		if velocity.length() > 10:
+			print("Sliding on ice! Speed: " + str(velocity.length()))
+			
+		# Update previous velocity for next frame
+		set_meta("prev_velocity", velocity)
+	else:
+		# Reset previous velocity when not on ice
+		if has_meta("prev_velocity"):
+			remove_meta("prev_velocity")
+			
 	move_and_slide()
 
 func _on_respawn_timer_timeout():

@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dog3rblufic2o"]
+
+[ext_resource type="Texture2D" uid="uid://ba0gvdlimg8yo" path="res://assets/icepad.png" id="1_7mmgs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3gn6n"]
+size = Vector2(128, 64)
+
+[node name="IcePad" type="Area2D"]
+texture_filter = 1
+
+[node name="IcePadSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_7mmgs")
+
+[node name="IcePadCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_3gn6n")
