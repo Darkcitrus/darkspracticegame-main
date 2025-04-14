@@ -269,8 +269,14 @@ func shoot_fireball():
 		return
 		
 	var player = get_tree().get_first_node_in_group("Player")
-	# Only shoot if player exists and is alive
+	# Only shoot if player exists, is alive, and is not sneaking
 	if player and player.alive and fireball_scene:
+		# Check if player is sneaking (undetectable)
+		if player.has_meta("is_undetectable"):
+			# Player is sneaking, don't target them
+			print("Player is sneaking - dummy cannot detect them")
+			return
+			
 		var fireball = fireball_scene.instantiate()
 		get_tree().get_root().add_child(fireball)
 		fireball.global_position = global_position

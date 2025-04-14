@@ -12,6 +12,11 @@ var ice_spot_scene = null
 var spawn_interval: float = 0.01  # Much more frequent spawning (was 0.5)
 var last_spawn_time: float = 0.0
 
+# Sneaking functionality
+var is_sneaking: bool = false
+var normal_speed_multiplier: float = 1.0
+var sneak_speed_multiplier: float = 0.75
+
 func initialize(player_node: Node):
 	player = player_node
 	dodge_timer = player.get_node("DodgeTimer")
@@ -35,6 +40,9 @@ func _physics_process(delta):
 	if not player or not player.can_take_actions():
 		return
 
+	# Handle sneaking
+	handle_sneaking()
+
 	# Normal movement code
 	handle_movement()
 	
@@ -47,6 +55,58 @@ func _physics_process(delta):
 	else:
 		if player.has_meta("key4_pressed"):
 			player.remove_meta("key4_pressed")
+
+# Handle sneaking logic
+func handle_sneaking():
+	if not player:
+		return
+		
+	var was_sneaking = is_sneaking
+	is_sneaking = Input.is_action_pressed("sneak")
+	
+	# If sneaking state changed
+	if was_sneaking != is_sneaking:
+		if is_sneaking:
+			# Started sneaking
+			apply_sneak_effects()
+		else:
+			# Stopped sneaking
+			remove_sneak_effects()
+
+# Apply effects when player starts sneaking
+func apply_sneak_effects():
+	# Make player partially transparent
+	if player.has_node("PlayerSprite"):
+		player.get_node("PlayerSprite").modulate.a = 0.5
+	
+	# Store original speed if not already stored
+	if not player.has_meta("original_run_speed_before_sneak"):
+		player.set_meta("original_run_speed_before_sneak", player.run_speed)
+	
+	# Apply reduced speed (75% of original)
+	player.run_speed = player.get_meta("original_run_speed_before_sneak") * sneak_speed_multiplier
+	
+	# Set undetectable flag for dummies to check
+	player.set_meta("is_undetectable", true)
+	
+	print("Started sneaking. Speed reduced to: " + str(player.run_speed))
+
+# Remove effects when player stops sneaking
+func remove_sneak_effects():
+	# Restore normal transparency
+	if player.has_node("PlayerSprite"):
+		player.get_node("PlayerSprite").modulate.a = 1.0
+	
+	# Restore original speed
+	if player.has_meta("original_run_speed_before_sneak"):
+		player.run_speed = player.get_meta("original_run_speed_before_sneak")
+		player.remove_meta("original_run_speed_before_sneak")
+	
+	# Remove undetectable flag
+	if player.has_meta("is_undetectable"):
+		player.remove_meta("is_undetectable")
+	
+	print("Stopped sneaking. Speed restored to: " + str(player.run_speed))
 
 func handle_movement():
 	# Check again if the player can take actions (in case this is called directly)
@@ -95,7 +155,7 @@ func toggle_ice_spot_spawning():
 		remove_ice_effects_from_player()
 
 # Handle spawning ice spots at regular intervals when enabled
-func handle_ice_spots(delta):
+func handle_ice_spots(_delta):
 	if ice_spot_spawning_enabled and ice_spot_scene:
 		var current_time = Time.get_ticks_msec() / 1000.0
 		if current_time - last_spawn_time >= spawn_interval:
@@ -171,28 +231,42 @@ func apply_ice_effects_to_player():
 # Remove ice effects from the player directly from movement script
 func remove_ice_effects_from_player():
 	if player:
-		# Restore original friction if we have it stored
-		if player.has_meta("original_friction"):
-			player.friction = player.get_meta("original_friction")
-			print("Removed slippery effect, friction restored to: ", player.get_meta("original_friction"))
-		
-		# Restore original speed if we increased it
-		if player.has_meta("original_run_speed"):
-			player.run_speed = player.get_meta("original_run_speed")
-			print("Restored player speed from ice to: ", player.run_speed)
-			player.remove_meta("original_run_speed")
-			player.remove_meta("current_speed_multiplier")
+		# When toggling off ice, use sliding momentum instead of instantly stopping
+		if player.has_meta("on_ice") and ice_spot_spawning_enabled == false:
+			# Set medium friction for sliding (between ice and normal)
+			if player.has_meta("original_friction"):
+				player.friction = lerp(0.2, player.get_meta("original_friction"), 0.3)  
+				print("Entered sliding state with friction: ", player.friction)
 			
-			# Stop and remove the acceleration timer
-			if player.has_node("IceAccelerationTimer"):
-				var timer = player.get_node("IceAccelerationTimer")
-				timer.stop()
-				timer.queue_free()
-				print("Stopped speed acceleration timer")
-		
-		# Remove the on_ice flag
-		if player.has_meta("on_ice"):
+			# Keep current speed for sliding momentum
+			if player.has_meta("original_run_speed") and player.has_meta("current_speed_multiplier"):
+				var current_speed = player.run_speed
+				print("Maintaining momentum at speed: ", current_speed)
+				
+				# Stop acceleration timer
+				if player.has_node("IceAccelerationTimer"):
+					var accel_timer = player.get_node("IceAccelerationTimer")
+					accel_timer.stop()
+					accel_timer.queue_free()
+					print("Stopped acceleration timer")
+				
+				# Create sliding timer to gradually reduce speed
+				if not player.has_node("SlidingMomentumTimer"):
+					var sliding_timer = Timer.new()
+					sliding_timer.name = "SlidingMomentumTimer"
+					sliding_timer.wait_time = 0.05  # Update speed reduction 20 times per second
+					sliding_timer.connect("timeout", _on_sliding_momentum_timeout)
+					player.add_child(sliding_timer)
+					sliding_timer.start()
+					print("Started sliding momentum timer")
+			
+			# Change on_ice flag to sliding flag
 			player.remove_meta("on_ice")
+			player.set_meta("is_sliding", true)
+			print("Player is now sliding")
+		else:
+			# Complete reset (for direct calls that aren't toggle-related)
+			stop_sliding()
 
 # Function to gradually increase player speed while on ice
 func _on_acceleration_timeout():
@@ -215,3 +289,64 @@ func _on_acceleration_timeout():
 		# Debug output every 0.2 seconds to avoid spamming the console
 		if int(Time.get_ticks_msec() / 200) % 5 == 0:
 			print("Gradually increasing speed: " + str(int(new_multiplier * 100)) + "% of original speed")
+
+# Function to gradually decrease player speed during sliding
+func _on_sliding_momentum_timeout():
+	if player and is_instance_valid(player) and player.has_meta("is_sliding"):
+		var original_speed = player.get_meta("original_run_speed")
+		
+		# Define sliding properties
+		var sliding_deceleration_rate = 0.5		# Rate at which speed decreases (0.5 = 50% of previous speed each step)
+		var min_sliding_speed_percentage = 0.10  # Stop sliding when reaching 10% of original speed
+		
+		# Gradually decrease speed
+		var new_speed = player.run_speed * sliding_deceleration_rate
+		
+		# Calculate percentage of original speed
+		var percentage_of_original = new_speed / original_speed
+		
+		# If speed is low enough, stop sliding
+		if percentage_of_original <= min_sliding_speed_percentage:
+			stop_sliding()
+		else:
+			# Apply gradually decreasing speed
+			player.run_speed = new_speed
+			
+			# Gradually increase friction back to normal
+			if player.has_meta("original_friction"):
+				var target_friction = player.get_meta("original_friction")
+				player.friction = lerp(player.friction, target_friction, 0.05)
+			
+			# Debug output every few updates
+			if int(Time.get_ticks_msec() / 200) % 5 == 0:
+				print("Sliding momentum: " + str(int(percentage_of_original * 100)) + "% of original speed")
+
+# Function to finalize stopping sliding
+func stop_sliding():
+	if player:
+		print("Player stopped sliding")
+		
+		# Restore original speed
+		if player.has_meta("original_run_speed"):
+			player.run_speed = player.get_meta("original_run_speed")
+			player.remove_meta("original_run_speed")
+		
+		# Restore original friction
+		if player.has_meta("original_friction"):
+			player.friction = player.get_meta("original_friction")
+			player.remove_meta("original_friction")
+		
+		# Stop and remove the sliding timer
+		if player.has_node("SlidingMomentumTimer"):
+			var sliding_timer = player.get_node("SlidingMomentumTimer")
+			sliding_timer.stop()
+			sliding_timer.queue_free()
+			print("Removed sliding momentum timer")
+		
+		# Remove sliding flag
+		if player.has_meta("is_sliding"):
+			player.remove_meta("is_sliding")
+		
+		# Remove any other related metadata
+		if player.has_meta("current_speed_multiplier"):
+			player.remove_meta("current_speed_multiplier")
