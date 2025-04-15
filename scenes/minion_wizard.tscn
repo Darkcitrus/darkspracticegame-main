@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5so7enk62r1a"]
+
+[ext_resource type="Texture2D" uid="uid://dotdpqjffjcp3" path="res://assets/roguewizard1.png" id="1_qr6rv"]
+[ext_resource type="Script" uid="uid://qjwbk1bbsc5d" path="res://scripts/MinionWizard.gd" id="2_38s5e"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8o4ef"]
+radius = 7.0
+height = 28.0
+
+[node name="MinionWizard" type="CharacterBody2D" groups=["Effect", "Minion"]]
+texture_filter = 1
+collision_layer = 8
+collision_mask = 6
+script = ExtResource("2_38s5e")
+
+[node name="MinionWizardSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_qr6rv")
+
+[node name="MinionWizardCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_8o4ef")

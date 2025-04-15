@@ -1,4 +1,4 @@
-[gd_scene load_steps=86 format=3 uid="uid://bddudkfbtetv1"]
+[gd_scene load_steps=87 format=3 uid="uid://bddudkfbtetv1"]
 
 [ext_resource type="Script" uid="uid://dtmjukaqml2hg" path="res://scripts/Player.gd" id="1_irpag"]
 [ext_resource type="Script" uid="uid://c5ejhctead2w4" path="res://scripts/PlayerMovement.gd" id="2_bpsgo"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://d4jelq3g5uyw5" path="res://scripts/PlayerAnimation.gd" id="5_lw0jh"]
 [ext_resource type="Script" uid="uid://b5q4bi7m22qsb" path="res://scripts/PlayerTeleport.gd" id="6_ry8ed"]
 [ext_resource type="Script" uid="uid://bpdqr1b68sfx7" path="res://scripts/PlayerGrappling.gd" id="7_au8ao"]
+[ext_resource type="Script" uid="uid://bgrycgvqhm2g0" path="res://scripts/PlayerSummon.gd" id="8_sum3m"]
 [ext_resource type="Texture2D" uid="uid://vvrt8kpshrvo" path="res://assets/Warrior/Individual Sprite/Attack/Warrior_Attack_1.png" id="8_w5j5w"]
 [ext_resource type="Texture2D" uid="uid://br473idc0blw4" path="res://assets/Warrior/Individual Sprite/Attack/Warrior_Attack_2.png" id="9_cbf1i"]
 [ext_resource type="Texture2D" uid="uid://dsew1n0v7hlgk" path="res://assets/Warrior/Individual Sprite/Attack/Warrior_Attack_3.png" id="10_4vfid"]
@@ -376,6 +377,9 @@ script = ExtResource("6_ry8ed")
 [node name="PlayerGrappling" type="Node2D" parent="."]
 script = ExtResource("7_au8ao")
 grapple_pull_speed = 6.0
+
+[node name="PlayerSummon" type="Node2D" parent="."]
+script = ExtResource("8_sum3m")
 
 [node name="PlayerSprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 5

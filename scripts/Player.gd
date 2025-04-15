@@ -99,6 +99,11 @@ func _ready():
 		attackcd = Timer.new()
 		add_child(attackcd)
 		attackcd.wait_time = 0.3
+		
+	# Initialize PlayerSummon component if it exists
+	if has_node("PlayerSummon"):
+		$PlayerSummon.initialize(self)
+		print("PlayerSummon component initialized")
 		attackcd.one_shot = true
 		attackcd.connect("timeout", _on_attackcd_timeout)
 	
@@ -247,6 +252,8 @@ func _physics_process(delta):
 		$PlayerTeleport._physics_process(delta)
 	if has_node("PlayerGrappling"):
 		$PlayerGrappling._physics_process(delta)
+	if has_node("PlayerSummon"):
+		$PlayerSummon._physics_process(delta)
 		
 	# Apply friction to movement before calling move_and_slide
 	# Lower friction (caused by ice spots) makes player continue moving in their current direction
